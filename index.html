@@ -53,7 +53,6 @@
         .leyla-title {
             font-family: 'Caveat', cursive;
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -129,7 +128,7 @@
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Ad Soyad <span class="text-rose-500">*</span></label>
                         <div class="relative">
                             <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
-                            <input type="text" id="form-name" required placeholder="Örn: Ahmet Utku Tatar" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-slate-50/50 transition">
+                            <input type="text" id="form-name" required placeholder="Adınız Soyadınız" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-slate-50/50 transition">
                         </div>
                     </div>
 
@@ -226,6 +225,9 @@
                     <button id="admin-subtab-btn-applicants" onclick="setAdminSubtab('applicants')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Başvuran Havuzu (<span id="cnt-subtab">0</span>)
                     </button>
+                    <button id="admin-subtab-btn-seniors" onclick="setAdminSubtab('seniors')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-shield text-brand-600"></i> Kıdemli Yönetimi
+                    </button>
                     <button id="admin-subtab-btn-stats" onclick="setAdminSubtab('stats')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
                         <i class="fa-solid fa-trophy text-amber-500"></i> Ayın Kıdemlisi & İstatistik
                     </button>
@@ -236,7 +238,7 @@
                         <i class="fa-brands fa-whatsapp"></i> WhatsApp Metni Yapıştır
                     </button>
                     <button onclick="clearAllData()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-semibold transition">
-                        Temizle
+                        Tüm Verileri Temizle
                     </button>
                 </div>
             </div>
@@ -251,12 +253,18 @@
                         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-brand-600"></i> Algoritma Parametreleri
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Dinamik Referans Saat Seçimi -->
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600 block mb-1">Referans Başlangıç Saati:</label>
+                                <input type="time" id="param-ref-time" value="11:00" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
+                                <p class="text-[10px] text-slate-400 mt-1">Gruptaki form açılış saati</p>
+                            </div>
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">
-                                    Ziyaret Ağırlık Katsayısı ($K$): <span id="k-disp" class="font-bold text-brand-600">15 Dakika</span>
+                                    Ziyaret Ağırlığı ($K$): <span id="k-disp" class="font-bold text-brand-600">15 Dk</span>
                                 </label>
-                                <input type="range" id="param-k" min="5" max="30" step="5" value="15" oninput="document.getElementById('k-disp').innerText = this.value + ' Dakika'" class="w-full accent-brand-600 cursor-pointer">
+                                <input type="range" id="param-k" min="5" max="30" step="5" value="15" oninput="document.getElementById('k-disp').innerText = this.value + ' Dk'" class="w-full accent-brand-600 cursor-pointer">
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">Kıdemli Başına Üye Kontenjanı:</label>
@@ -283,7 +291,7 @@
                     <!-- Action bar -->
                     <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div class="text-xs text-slate-500 font-medium">
-                            * İsimleri tıklayarak veya otomatik buton ile yer değiştirebilirsiniz.
+                            * Çizelgeyi oluşturduktan sonra görsel formatında bilgisayarınıza indirebilirsiniz.
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="downloadPosterImage()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition flex items-center gap-1.5">
@@ -365,7 +373,43 @@
                 </div>
             </div>
 
-            <!-- ADMIN SUBTAB 3: LEADERBOARD & STATS (STRICTLY SENIORS ONLY) -->
+            <!-- ADMIN SUBTAB 3: SENIORS MANAGEMENT -->
+            <div id="admin-sub-seniors" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-user-shield text-brand-600"></i> Kıdemli Listesi Yönetimi
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Sistemde tanınacak ve otomatik kıdemli olarak işaretlenecek kişileri buradan yönetebilirsiniz.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 max-w-md">
+                        <input type="text" id="new-senior-name" placeholder="Kıdemli Adı Soyadı..." class="flex-1 p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        <button onclick="addKnownSenior()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition">
+                            Ekle
+                        </button>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase">
+                                    <th class="p-3.5 pl-6">#</th>
+                                    <th class="p-3.5">Kıdemli Ad Soyad</th>
+                                    <th class="p-3.5 text-right pr-6">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="known-seniors-tbody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Dynamic Seniors List -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN SUBTAB 4: LEADERBOARD & STATS -->
             <div id="admin-sub-stats" class="hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200/80 p-6 space-y-6">
                     <div class="flex items-center justify-between">
@@ -433,7 +477,7 @@
                 <i class="fa-solid fa-lock"></i>
             </div>
             <div>
-                <h3 class="font-bold text-slate-900 text-base">Yönetici Girişi Required</h3>
+                <h3 class="font-bold text-slate-900 text-base">Yönetici Girişi</h3>
                 <p class="text-xs text-slate-500 mt-1">Yönetim paneline erişmek için şifreyi giriniz.</p>
             </div>
             <input type="password" id="admin-passcode-input" placeholder="Giriş Şifresi..." class="w-full p-3 rounded-xl border border-slate-200 text-center font-bold text-sm bg-slate-50 focus:ring-2 focus:ring-brand-500">
@@ -459,14 +503,14 @@
             
             <p class="text-xs text-slate-500">Gruba atılan mesajları kopyalayıp buraya yapıştırabilirsiniz. Sistem zamanı, adı, ziyaret sayısını ve günleri otomatik ayrıştıracaktır.</p>
 
-            <textarea id="whatsapp-raw-input" rows="8" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 resize-none focus:ring-2 focus:ring-brand-500" placeholder="[24/10 10:01] Ahmet Utku Tatar: Ahmet Utku Tatar 
+            <textarea id="whatsapp-raw-input" rows="8" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 resize-none focus:ring-2 focus:ring-brand-500" placeholder="[24/10 11:01] Öğrenci A: Öğrenci A
 Dönem 2
 Daha önce hiç ziyarette bulunmadım.
 Pazartesi müsaitim."></textarea>
 
             <div class="flex items-center justify-between pt-2">
                 <button onclick="loadSampleWhatsApp()" class="text-xs text-brand-600 hover:underline font-semibold">
-                    Örnek Veri Yükle (2. Hafta)
+                    Örnek Format Yükle
                 </button>
                 <div class="flex items-center gap-2">
                     <button onclick="closeWhatsAppModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold">İptal</button>
@@ -479,34 +523,19 @@ Pazartesi müsaitim."></textarea>
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
         // GLOBAL STATE
-        let currentMode = 'student'; // 'student' or 'admin'
+        let currentMode = 'student';
         let isAdminAuthenticated = false;
         let currentAdminSubtab = 'generator';
         let applicants = [];
         let activeSchedule = {};
 
-        // Known Seniors Database & Anonymous Samples for Demo
-        const knownSeniors = [
-            "Aylin Topçu", "Ali Eren Göçmen", "Fidan Nur Gönültaş", "Hayrunnisa Akıllı",
-            "Özlem Kerküklü", "Ece Dinçer", "Z. Reyyan Özayhan", "Nazlı Gül Kandıraz",
-            "Edanur Öğden", "Şeyma Özkul", "Ayten Beyza Doru", "Ceyda Öztürk",
-            "Elif Ayşe Bakır", "Elif Armağan", "Beyza Nur Temur", "Rabia Aslantaş",
-            "Nehir Boz", "İrem Koçak", "Kıdemli A", "Kıdemli B", "Kıdemli C", "Kıdemli D"
-        ];
-
-        // Seed Anonymous Seniors for Demo Leaderboard
-        const seedSeniors = [
-            { id: 's1', name: 'Kıdemli A', term: 'Dönem 3', visits: 14, isSenior: true, days: ['Pazartesi', 'Salı'], timeString: '10:00', timeMinutes: 0, score: 210 },
-            { id: 's2', name: 'Kıdemli B', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Çarşamba', 'Cuma'], timeString: '10:00', timeMinutes: 0, score: 165 },
-            { id: 's3', name: 'Kıdemli C', term: 'Dönem 2', visits: 8, isSenior: true, days: ['Pazartesi', 'Perşembe'], timeString: '10:00', timeMinutes: 0, score: 120 },
-            { id: 's4', name: 'Kıdemli D', term: 'Dönem 3', visits: 6, isSenior: true, days: ['Salı', 'Cuma'], timeString: '10:00', timeMinutes: 0, score: 90 }
-        ];
+        // Dynamic Known Seniors Array (Dinamik eklenebilir / silinebilir)
+        let knownSeniors = ["Kıdemli A", "Kıdemli B", "Kıdemli C", "Kıdemli D"];
 
         // INIT
         window.onload = function() {
-            applicants = [...seedSeniors];
-            loadSampleWhatsApp();
-            parseWhatsAppInput(true); // silent load
+            updateLiveApplicantCounter();
+            renderKnownSeniors();
         };
 
         // ADMIN ACCESS & PASSCODE
@@ -526,7 +555,7 @@ Pazartesi müsaitim."></textarea>
                 closePasscodeModal();
                 setMode('admin');
             } else {
-                alert("Hatalı Şifre! (İpucu: leyladansonra)");
+                alert("Hatalı Şifre! (Varsayılan: leyladansonra)");
             }
         }
 
@@ -568,13 +597,32 @@ Pazartesi müsaitim."></textarea>
             currentAdminSubtab = subtab;
             document.getElementById('admin-sub-generator').classList.toggle('hidden', subtab !== 'generator');
             document.getElementById('admin-sub-applicants').classList.toggle('hidden', subtab !== 'applicants');
+            document.getElementById('admin-sub-seniors').classList.toggle('hidden', subtab !== 'seniors');
             document.getElementById('admin-sub-stats').classList.toggle('hidden', subtab !== 'stats');
 
-            document.getElementById('admin-subtab-btn-generator').className = subtab === 'generator' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm flex items-center gap-1.5' : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
-            document.getElementById('admin-subtab-btn-applicants').className = subtab === 'applicants' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm flex items-center gap-1.5' : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
-            document.getElementById('admin-subtab-btn-stats').className = subtab === 'stats' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm flex items-center gap-1.5' : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+            const btnClassActive = 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm flex items-center gap-1.5';
+            const btnClassInactive = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+
+            document.getElementById('admin-subtab-btn-generator').className = subtab === 'generator' ? btnClassActive : btnClassInactive;
+            document.getElementById('admin-subtab-btn-applicants').className = subtab === 'applicants' ? btnClassActive : btnClassInactive;
+            document.getElementById('admin-subtab-btn-seniors').className = subtab === 'seniors' ? btnClassActive : btnClassInactive;
+            document.getElementById('admin-subtab-btn-stats').className = subtab === 'stats' ? btnClassActive : btnClassInactive;
 
             if (subtab === 'stats') renderLeaderboard();
+            if (subtab === 'seniors') renderKnownSeniors();
+        }
+
+        // DYNAMIC REFERENCE TIME CALCULATION
+        function calculateElapsedMinutes(timeStr) {
+            const refTimeVal = document.getElementById('param-ref-time').value || "11:00";
+            const [refHour, refMin] = refTimeVal.split(':').map(Number);
+            const refTotalMinutes = (refHour * 60) + refMin;
+
+            const [h, m] = timeStr.split(':').map(Number);
+            const applicantTotalMinutes = (h * 60) + m;
+
+            let diff = applicantTotalMinutes - refTotalMinutes;
+            return Math.max(0, diff);
         }
 
         // STUDENT FORM SUBMISSION
@@ -594,24 +642,24 @@ Pazartesi müsaitim."></textarea>
 
             const now = new Date();
             const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            const minsElapsed = (now.getHours() * 60 + now.getMinutes()) - (10 * 60);
+            const minsElapsed = calculateElapsedMinutes(timeStr);
+            const kFactor = parseInt(document.getElementById('param-k').value) || 15;
 
             const newApplicant = {
                 id: Math.random().toString(36).substr(2, 9),
                 name: name,
                 term: term,
                 visits: visits,
-                isSenior: role === 'senior',
+                isSenior: role === 'senior' || knownSeniors.some(s => s.toLowerCase() === name.toLowerCase()),
                 days: dayCbs,
                 timeString: timeStr,
-                timeMinutes: Math.max(0, minsElapsed),
-                score: Math.max(0, minsElapsed) + (visits * 15)
+                timeMinutes: minsElapsed,
+                score: minsElapsed + (visits * kFactor)
             };
 
             applicants.push(newApplicant);
             updateLiveApplicantCounter();
 
-            // Show Toast & Reset Form
             document.getElementById('student-form').reset();
             const toast = document.getElementById('form-success-toast');
             toast.classList.remove('hidden');
@@ -629,14 +677,13 @@ Pazartesi müsaitim."></textarea>
                 if (!block.trim()) return;
 
                 const timeMatch = block.match(/(\d{1,2}):(\d{2})/);
-                let minsElapsed = 0;
-                let timeStr = "10:00";
+                let timeStr = "11:00";
 
                 if (timeMatch) {
-                    minsElapsed = (parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2])) - (10 * 60);
-                    if (minsElapsed < 0) minsElapsed = 0;
                     timeStr = `${timeMatch[1].padStart(2, '0')}:${timeMatch[2].padStart(2, '0')}`;
                 }
+
+                const minsElapsed = calculateElapsedMinutes(timeStr);
 
                 let name = "";
                 const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -655,7 +702,7 @@ Pazartesi müsaitim."></textarea>
                     }
                 }
 
-                if (!name || name.length < 3) return;
+                if (!name || name.length < 2) return;
                 name = name.replace(/^(\+90|0)?\s*5\d{2}\s*\d{3}\s*\d{2}\s*\d{2}:?/, '').trim();
 
                 let visits = 0;
@@ -671,6 +718,7 @@ Pazartesi müsaitim."></textarea>
                 });
 
                 const isSenior = knownSeniors.some(s => s.toLowerCase() === name.toLowerCase()) || lower.includes('kıdemli');
+                const kFactor = parseInt(document.getElementById('param-k').value) || 15;
 
                 applicants.push({
                     id: Math.random().toString(36).substr(2, 9),
@@ -678,16 +726,16 @@ Pazartesi müsaitim."></textarea>
                     term: 'Dönem 2',
                     visits: visits,
                     isSenior: isSenior,
-                    days: days.length > 0 ? days : ['Pazartesi', 'Salı', 'Cuma'],
+                    days: days.length > 0 ? days : ['Pazartesi', 'Salı'],
                     timeString: timeStr,
                     timeMinutes: minsElapsed,
-                    score: minsElapsed + (visits * 15)
+                    score: minsElapsed + (visits * kFactor)
                 });
             });
 
             updateLiveApplicantCounter();
             closeWhatsAppModal();
-            if (!silent) alert(`${applicants.length} başvuru sisteme başarıyla işlendi!`);
+            if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
         }
 
         // AUTO SCHEDULER ALGORITHM
@@ -698,7 +746,10 @@ Pazartesi müsaitim."></textarea>
             }
 
             const kFactor = parseInt(document.getElementById('param-k').value) || 15;
+            
+            // Recalculate scores with current reference time and K factor
             applicants.forEach(a => {
+                a.timeMinutes = calculateElapsedMinutes(a.timeString);
                 a.score = a.timeMinutes + (a.visits * kFactor);
             });
 
@@ -709,10 +760,10 @@ Pazartesi müsaitim."></textarea>
             const seniors = applicants.filter(a => a.isSenior).sort((a,b) => a.timeMinutes - b.timeMinutes);
             const members = applicants.filter(a => !a.isSenior).sort((a,b) => a.score - b.score);
 
-            // Assign Seniors first
+            // Assign Seniors
             seniors.forEach(senior => {
                 for (let d of senior.days) {
-                    if (activeSchedule[d] && activeSchedule[d].seniors.length < 5) {
+                    if (activeSchedule[d] && activeSchedule[d].seniors.length < 6) {
                         activeSchedule[d].seniors.push(senior);
                         break;
                     }
@@ -790,12 +841,44 @@ Pazartesi müsaitim."></textarea>
             });
         }
 
-        // RENDER LEADERBOARD (STRICTLY FILTERS ONLY SENIORS)
+        // SENIORS MANAGEMENT FUNCTIONS
+        function renderKnownSeniors() {
+            const tbody = document.getElementById('known-seniors-tbody');
+            tbody.innerHTML = '';
+
+            knownSeniors.forEach((senior, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3.5 pl-6 font-bold text-slate-400">#${idx + 1}</td>
+                    <td class="p-3.5 font-bold text-slate-800">${senior}</td>
+                    <td class="p-3.5 text-right pr-6">
+                        <button onclick="removeKnownSenior(${idx})" class="text-rose-600 hover:text-rose-800 font-bold text-xs">Sil</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addKnownSenior() {
+            const input = document.getElementById('new-senior-name');
+            const name = input.value.trim();
+            if (name && !knownSeniors.includes(name)) {
+                knownSeniors.push(name);
+                input.value = '';
+                renderKnownSeniors();
+            }
+        }
+
+        function removeKnownSenior(index) {
+            knownSeniors.splice(index, 1);
+            renderKnownSeniors();
+        }
+
+        // RENDER LEADERBOARD (FILTERS ONLY SENIORS)
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-tbody');
             tbody.innerHTML = '';
 
-            // STRICT FILTER: ONLY SENIORS
             const seniorsOnly = applicants.filter(a => a.isSenior);
 
             document.getElementById('stat-volunteers').innerText = seniorsOnly.length;
@@ -839,55 +922,31 @@ Pazartesi müsaitim."></textarea>
         function closeWhatsAppModal() { document.getElementById('modal-whatsapp').classList.add('hidden'); document.getElementById('modal-whatsapp').classList.remove('flex'); }
 
         function loadSampleWhatsApp() {
-            document.getElementById('whatsapp-raw-input').value = `[24/10 10:01] Utku Tatar: Ahmet Utku Tatar 
+            document.getElementById('whatsapp-raw-input').value = `[24/10 11:01] Öğrenci A: Öğrenci A 
 Dönem 2
 Daha önce hiç ziyarette bulunmadım.
 Pazartesi müsaitim.
-[24/10 10:01] +90 551 093 69 79: Elif Tutal 
+[24/10 11:01] +90 555 000 00 00: Öğrenci B
 Dönem 2
 3 ziyarette bulundum
 Salı günü müsaitim
-[24/10 10:01] +90 507 354 05 19: Sevde Nur yıldırım 
-Dönem 1
-Daha önce ziyarette bulunmadım
-Pazartesi müsaitim
-[24/10 10:01] +90 552 233 02 43: Mehmet Oğuz CINGILLI
-Dönem 3 
-Daha önce hiç ziyarete gitmedim
-Salı müsaitim
-[24/10 10:01] +90 551 165 53 65: Elif Rana Özcan 
-Dönem 3 
-6 ziyarette bulundum
-Cuma müsaitim
-[24/10 10:02] @simayboylu: Simay boylu 
-dönem 2
-daha önce ziyaretim yok
-salı müsaitim
-[24/10 10:02] @Sametssahin: Hamdi samet şahin 
-Dönem 2 
-Hiç zıyarete gıtmedım
-Salı musaıtım
-[24/10 10:02] +90 551 165 11 08: Aslı İrem Ulu
+[24/10 11:02] Kıdemli A: Kıdemli A
 Dönem 3
-10 ziyarette bulundum
-Cuma müsaitim
-[24/10 10:02] +90 546 508 80 29: Ecrin Arık 
-Dönem 1
-1 ziyarette bulundum (pediatri)
-Pazartesi müsaitim
-[24/10 10:02] +90 543 151 38 33: Göksu Günal
-Dönem 1
-Hiç ziyarete gitmedim
-Cuma müsaitim`;
+12 ziyarette bulundum
+Pazartesi müsaitim`;
         }
 
+        // FULL PURGE / CLEAR ALL DATA
         function clearAllData() {
-            if (confirm("Tüm başvuran verilerini sıfırlamak istediğinize emin misiniz?")) {
-                applicants = [...seedSeniors];
+            if (confirm("Kıdemliler ve başvurular dahil TÜM verileri sıfırlamak istediğinize emin misiniz?")) {
+                applicants = [];
                 activeSchedule = {};
+                knownSeniors = [];
                 updateLiveApplicantCounter();
                 updateApplicantsTable();
+                renderKnownSeniors();
                 renderPoster();
+                alert("Tüm veriler başarıyla temizlendi.");
             }
         }
     </script>
