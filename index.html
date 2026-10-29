@@ -529,7 +529,7 @@ Pazartesi müsaitim."></textarea>
         let applicants = [];
         let activeSchedule = {};
 
-        // Dynamic Known Seniors Array (Dinamik eklenebilir / silinebilir)
+        // Dynamic Known Seniors Array
         let knownSeniors = [
             "Ahmet Utku Tatar", "Zeynep Arslan", "Mehmet Yılmaz", "Ayşe Kaya",
             "Caner Demir", "Fatma Çelik", "Burak Şahin", "Selin Aydın",
@@ -780,7 +780,7 @@ Pazartesi müsaitim."></textarea>
             if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
         }
 
-        // AUTO SCHEDULER ALGORITHM
+        // AUTO SCHEDULER ALGORITHM (IMPROVED EQUAL SENIOR DISTRIBUTION & STRICT NO-SENIOR RULES)
         function runAutoScheduler() {
             if (applicants.length === 0) {
                 alert("Henüz başvuru yok. WhatsApp metni yapıştırın veya öğrenci formunu doldurun.");
@@ -799,26 +799,51 @@ Pazartesi müsaitim."></textarea>
             activeSchedule = {};
             days.forEach(d => activeSchedule[d] = { seniors: [], members: [] });
 
+            // Sort applicants
             const seniors = applicants.filter(a => a.isSenior).sort((a,b) => a.timeMinutes - b.timeMinutes);
             const members = applicants.filter(a => !a.isSenior).sort((a,b) => a.score - b.score);
 
-            // Assign Seniors
+            // 1. ASSIGN SENIORS EQUALLY ACROSS DAYS (BALANCED DISTRIBUTION)
             seniors.forEach(senior => {
+                // Find eligible day for this senior with the MINIMUM current senior count
+                let bestDay = null;
+                let minCount = Infinity;
+
                 for (let d of senior.days) {
                     if (activeSchedule[d] && activeSchedule[d].seniors.length < 6) {
-                        activeSchedule[d].seniors.push(senior);
-                        break;
+                        if (activeSchedule[d].seniors.length < minCount) {
+                            minCount = activeSchedule[d].seniors.length;
+                            bestDay = d;
+                        }
                     }
+                }
+
+                if (bestDay) {
+                    activeSchedule[bestDay].seniors.push(senior);
                 }
             });
 
-            // Assign Members
+            // 2. ASSIGN MEMBERS ONLY TO DAYS THAT HAVE SENIORS
             const capMult = parseFloat(document.getElementById('param-cap').value) || 2.5;
+
             members.forEach(member => {
-                for (let d of member.days) {
-                    const cap = Math.round(Math.max(1, activeSchedule[d].seniors.length) * capMult);
-                    if (activeSchedule[d] && activeSchedule[d].members.length < cap) {
+                let assigned = false;
+
+                // Sort member's preferred days by least filled member ratio
+                const validDaysWithSeniors = member.days.filter(d => activeSchedule[d] && activeSchedule[d].seniors.length > 0);
+
+                // Sort preferred days: prefer day with lowest member-to-senior ratio
+                validDaysWithSeniors.sort((a, b) => {
+                    const ratioA = activeSchedule[a].members.length / activeSchedule[a].seniors.length;
+                    const ratioB = activeSchedule[b].members.length / activeSchedule[b].seniors.length;
+                    return ratioA - ratioB;
+                });
+
+                for (let d of validDaysWithSeniors) {
+                    const maxAllowedMembers = Math.round(activeSchedule[d].seniors.length * capMult);
+                    if (activeSchedule[d].members.length < maxAllowedMembers) {
                         activeSchedule[d].members.push(member);
+                        assigned = true;
                         break;
                     }
                 }
@@ -827,7 +852,7 @@ Pazartesi müsaitim."></textarea>
             renderPoster();
         }
 
-        // RENDER POSTER GRID
+        // RENDER POSTER GRID (STRICT GROUP NO-SENIOR GUARD)
         function renderPoster() {
             const body = document.getElementById('poster-rows-body');
             body.innerHTML = '';
@@ -843,8 +868,10 @@ Pazartesi müsaitim."></textarea>
 
                 allDays.forEach(day => {
                     const senior = activeSchedule[day]?.seniors[idx];
-                    const member1 = activeSchedule[day]?.members[idx * 2];
-                    const member2 = activeSchedule[day]?.members[(idx * 2) + 1];
+                    
+                    // CRITICAL FIX: If there is no senior for this specific row slot, DO NOT show members without a senior!
+                    const member1 = senior ? activeSchedule[day]?.members[idx * 2] : null;
+                    const member2 = senior ? activeSchedule[day]?.members[(idx * 2) + 1] : null;
 
                     html += `<div class="p-2 border-r-2 border-white last:border-r-0 flex flex-col justify-center items-center h-full space-y-0.5">`;
                     if (senior) html += `<div class="font-bold text-slate-900 leading-tight">${senior.name}</div>`;
