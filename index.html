@@ -3,195 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leyla'dan Sonra - Ziyaret Takip</title>
+    <title>Leyla'dan Sonra - Ziyaret Başvuru & Çizelge Yönetimi</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2canvas & jspdf for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <i class="fa-solid fa-heart-pulse"></i> Leyla'dan Sonra Ziyaret Takip
-            </h1>
-            <span class="text-xs bg-indigo-500 px-3 py-1 rounded-full font-medium">Anonim Sistem</span>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
-
-        <!-- Form Kartı -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
-            <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2 border-b pb-2">
-                <i class="fa-solid fa-pen-to-square text-indigo-600"></i> Ziyaret Kaydı Ekle
-            </h2>
-            
-            <form id="visitForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Anonim Öğrenci Seçimi -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ÖĞRENCİ (ANONİM)</label>
-                    <select id="studentSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="">Öğrenci Seçiniz...</option>
-                        <option value="Öğrenci #101">Öğrenci #101</option>
-                        <option value="Öğrenci #102">Öğrenci #102</option>
-                        <option value="Öğrenci #103">Öğrenci #103</option>
-                        <option value="Öğrenci #104">Öğrenci #104</option>
-                        <option value="Öğrenci #105">Öğrenci #105</option>
-                    </select>
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-heart-pulse text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-lg text-slate-900 tracking-tight block leading-none">Leyla'dan Sonra</span>
+                        <span class="text-xs font-semibold text-brand-600 tracking-wider uppercase">Ziyaret & Çizelge Otomasyonu</span>
+                    </div>
                 </div>
 
-                <!-- Kıdemli Seçimi -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">KIDEMLİ SEÇİMİ</label>
-                    <select id="seniorSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="">Kıdemli Seçiniz...</option>
-                        <option value="Kıdemli A">Kıdemli A</option>
-                        <option value="Kıdemli B">Kıdemli B</option>
-                        <option value="Kıdemli C">Kıdemli C</option>
-                    </select>
-                </div>
-
-                <!-- Tarih ve Detay -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ZİYARET TARİHİ</label>
-                    <input type="date" id="visitDate" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ZİYARET NOTU / DURUM</label>
-                    <input type="text" id="visitNote" placeholder="Örn: Hediye teslim edildi" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-
-                <div class="md:col-span-2">
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Kaydet
+                <!-- Tab Navigation Buttons -->
+                <div class="flex items-center gap-2">
+                    <button onclick="switchTab('application')" id="tab-btn-application" class="tab-btn active px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 bg-brand-50 text-brand-600">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span class="hidden sm:inline">Ziyaret Başvurusu</span>
+                    </button>
+                    <button onclick="switchTab('schedule')" id="tab-btn-schedule" class="tab-btn px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-table-list"></i>
+                        <span class="hidden sm:inline">Çizelge & Yönetim</span>
+                    </button>
+                    <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-3 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-gear"></i>
                     </button>
                 </div>
-            </form>
-        </div>
-
-        <!-- Liste Kartı -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-indigo-600"></i> Ziyaret Listesi
-                </h2>
-                <button id="clearAllBtn" class="text-xs text-rose-600 hover:text-rose-800 font-medium border border-rose-200 hover:bg-rose-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                    <i class="fa-solid fa-trash"></i> Tüm Verileri Sil
-                </button>
-            </div>
-
-            <!-- Tablo -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-100 text-xs text-slate-500 uppercase">
-                        <tr>
-                            <th class="p-3">Öğrenci (Anonim)</th>
-                            <th class="p-3">Kıdemli</th>
-                            <th class="p-3">Tarih</th>
-                            <th class="p-3">Not</th>
-                            <th class="p-3 text-right">İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="visitList" class="divide-y divide-slate-100">
-                        <!-- Dinamik Yüklenecek -->
-                    </tbody>
-                </table>
             </div>
         </div>
+    </nav>
 
-    </main>
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-    <!-- Script -->
+        <!-- TAB 1: ZİYARET BAŞVURUSU -->
+        <div id="tab-application" class="tab-content space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-user-shield text-brand-600"></i> Anonim Ziyaret Talebi
+                        </h2>
+                        <p class="text-sm text-slate-500 mt-1">Öğrenci kimlikleri sistemde gizli (anonim) tutulur. Uygun gün ve kıdemli seçerek talebinizi iletebilirsiniz.</p>
+                    </div>
+
+                    <form id="visitApplicationForm" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <!-- Anonim Öğrenci Seçimi -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Öğrenci Rumuzu (Anonim)</label>
+                                <div class="relative">
+                                    <select id="appStudent" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none appearance-none">
+                                        <option value="">Öğrenci Seçiniz...</option>
+                                        <option value="Öğrenci #101">Öğrenci #101</option>
+                                        <option value="Öğrenci #102">Öğrenci #102</option>
+                                        <option value="Öğrenci #103">Öğrenci #103</option>
+                                        <option value="Öğrenci #104">Öğrenci #104</option>
+                                        <option value="Öğrenci #105">Öğrenci #105</option>
+                                        <option value="Öğrenci #106">Öğrenci #106</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                </div>
+                            </div>
+
+                            <!-- Kıdemli Seçimi -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Kıdemli Seçimi</label>
+                                <div class="relative">
+                                    <select id="appSenior" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none appearance-none">
+                                        <!-- Dinamik olarak dolacak -->
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <!-- Tarih -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Ziyaret Tarihi</label>
+                                <input type="date" id="appDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none">
+                            </div>
+
+                            <!-- Saat Aralığı -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Ziyaret Zamanı / Slot</label>
+                                <select id="appTimeSlot" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none">
+                                    <option value="10:00 - 12:00">10:00 - 12:00 (Sabah)</option>
+                                    <option value="14:00 - 16:00">14:00 - 16:00 (Öğleden Sonra)</option>
+                                    <option value="16:00 - 18:00">16:00 - 18:00 (Akşamüstü)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Not -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Ziyaret Amacı / Not (Opsiyonel)</label>
+                            <textarea id="appNote" rows="3" placeholder="Ziyaret detayları, çocuk durumu veya hediyeler hakkında kısa not..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-medium text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Başvuruyu Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: ÇİZELGE & YÖNETİM -->
+        <div id="tab-schedule" class="tab-content hidden space-y-6">
+            
+            <!-- Kontrol & Filtre Barları -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="relative w-full md:w-64">
+                        <input type="text" id="searchInput" oninput="renderTable()" placeholder="Anonim kod veya kıdemli ara..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold focus:bg-white focus:border-brand-500 outline-none">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    </div>
+                    <select id="filterSenior" onchange="renderTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-700 focus:bg-white outline-none">
+                        <option value="ALL">Tüm Kıdemliler</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <button onclick="exportToPNG()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-image text-emerald-600"></i> Görsel Yap (PNG)
+                    </button>
+                    <button onclick="exportToPDF()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-file-pdf text-rose-600"></i> PDF İndir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Çizelge Tablosu Container -->
+            <div id="captureArea" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 text-base">Haftalık Ziyaret Çizelgesi</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Onaylı ve bekleyen tüm anonim ziyaret durumları</p>
+                    </div>
+                    <span id="totalRecordBadge" class="bg-brand-100 text-brand-700 text-xs font-extrabold px-3 py-1 rounded-full">0 Kayıt</span>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/70 border-b border-slate-200 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3.5 px-4">Tarih / Saat</th>
+                                <th class="py-3.5 px-4">Öğrenci (Anonim)</th>
+                                <th class="py-3.5 px-4">Kıdemli</th>
+                                <th class="py-3.5 px-4">Notlar</th>
+                                <th class="py-3.5 px-4 text-center">Durum</th>
+                                <th class="py-3.5 px-4 text-right">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+                            <!-- JS ile Dinamik Yüklenecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: AYARLAR VE VERİ YÖNETİMİ -->
+        <div id="tab-settings" class="tab-content hidden space-y-6 max-w-4xl mx-auto">
+            
+            <!-- Kıdemli Yönetimi -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3">
+                    <i class="fa-solid fa-user-gear text-brand-600"></i> Kıdemli Listesi Yönetimi
+                </h3>
+                
+                <form id="addSeniorForm" class="flex gap-2">
+                    <input type="text" id="newSeniorName" required placeholder="Yeni Kıdemli İsmi / Unvanı..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold focus:bg-white focus:border-brand-500 outline-none">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Ekle
+                    </button>
+                </form>
+
+                <div class="mt-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mevcut Kıdemliler</label>
+                    <div id="seniorBadgesContainer" class="flex flex-wrap gap-2">
+                        <!-- JS ile Dinamik Kıdemliler -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temizleme ve Sıfırlama Alanı -->
+            <div class="bg-white rounded-2xl shadow-sm border border-rose-100 p-6 space-y-4">
+                <h3 class="text-base font-bold text-rose-700 flex items-center gap-2 border-b border-rose-100 pb-3">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Veri Temizleme & Sıfırlama
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Sistemdeki kayıtlı olan tüm ziyaret taleplerini veya eklenmiş kıdemli verilerini buradan silebilirsiniz. Bu işlem geri alınamaz.
+                </p>
+
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <button onclick="clearAllVisits()" class="px-4 py-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-xs font-bold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-broom"></i> Tüm Ziyaret Verilerini Sil
+                    </button>
+                    <button onclick="resetSeniorsToDefault()" class="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 text-xs font-bold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Kıdemlileri Varsayılana Sıfırla
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scriptler ve Uygulama Mantığı -->
     <script>
+        // Varsayılan Kıdemliler Listesi
+        const DEFAULT_SENIORS = ["Dr. Ahmet Yılmaz", "Dr. Ayşe Kaya", "Dr. Mehmet Demir", "Dr. Zeynep Çelik"];
+
+        // State Yönetimi (LocalStorage)
+        let visits = JSON.parse(localStorage.getItem('ls_visits_v2')) || [];
+        let seniors = JSON.parse(localStorage.getItem('ls_seniors_v2')) || DEFAULT_SENIORS;
+
         document.addEventListener('DOMContentLoaded', () => {
-            const visitForm = document.getElementById('visitForm');
-            const studentSelect = document.getElementById('studentSelect');
-            const seniorSelect = document.getElementById('seniorSelect');
-            const visitDate = document.getElementById('visitDate');
-            const visitNote = document.getElementById('visitNote');
-            const visitList = document.getElementById('visitList');
-            const clearAllBtn = document.getElementById('clearAllBtn');
+            initApp();
+        });
 
-            // Yerel depolamadan çek veya boş dizi oluştur
-            let visits = JSON.parse(localStorage.getItem('ls_visits')) || [];
+        function initApp() {
+            renderSeniorOptions();
+            renderSeniorBadges();
+            renderTable();
+            
+            // Bugünün tarihini min yap
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appDate').value = today;
+        }
 
-            // Listeyi çizme fonksiyonu
-            function renderVisits() {
-                visitList.innerHTML = '';
-                if (visits.length === 0) {
-                    visitList.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-slate-400">Henüz kayıtlı ziyaret bulunmuyor.</td></tr>`;
-                    return;
-                }
-
-                visits.forEach((item, index) => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-50 transition-colors';
-                    tr.innerHTML = `
-                        <td class="p-3 font-medium text-slate-700">${item.student}</td>
-                        <td class="p-3"><span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded border">${item.senior}</span></td>
-                        <td class="p-3">${item.date}</td>
-                        <td class="p-3">${item.note || '-'}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="deleteVisit(${index})" class="text-slate-400 hover:text-rose-600 transition-colors">
-                                <i class="fa-solid fa-xmark text-base"></i>
-                            </button>
-                        </td>
-                    `;
-                    visitList.appendChild(tr);
-                });
-            }
-
-            // Form Gönderimi
-            visitForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (!studentSelect.value || !seniorSelect.value || !visitDate.value) {
-                    alert('Lütfen öğrenci, kıdemli ve tarih alanlarını doldurunuz.');
-                    return;
-                }
-
-                const newVisit = {
-                    student: studentSelect.value,
-                    senior: seniorSelect.value,
-                    date: visitDate.value,
-                    note: visitNote.value
-                };
-
-                visits.push(newVisit);
-                localStorage.setItem('ls_visits', JSON.stringify(visits));
-                renderVisits();
-                visitForm.reset();
+        // Tab Değiştirme Fonksiyonu
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'bg-brand-50', 'text-brand-600');
+                el.classList.add('text-slate-600');
             });
 
-            // Tekli Silme
-            window.deleteVisit = function(index) {
-                visits.splice(index, 1);
-                localStorage.setItem('ls_visits', JSON.stringify(visits));
-                renderVisits();
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+            activeBtn.classList.add('active', 'bg-brand-50', 'text-brand-600');
+            activeBtn.classList.remove('text-slate-600');
+        }
+
+        // Kıdemli Dropdownlarını Doldurma
+        function renderSeniorOptions() {
+            const appSeniorSelect = document.getElementById('appSenior');
+            const filterSeniorSelect = document.getElementById('filterSenior');
+
+            appSeniorSelect.innerHTML = '<option value="">Kıdemli Seçiniz...</option>';
+            filterSeniorSelect.innerHTML = '<option value="ALL">Tüm Kıdemliler</option>';
+
+            seniors.forEach(snr => {
+                appSeniorSelect.innerHTML += `<option value="${snr}">${snr}</option>`;
+                filterSeniorSelect.innerHTML += `<option value="${snr}">${snr}</option>`;
+            });
+        }
+
+        // Ayarlar Kıdemli Rozetlerini Çizme
+        function renderSeniorBadges() {
+            const container = document.getElementById('seniorBadgesContainer');
+            container.innerHTML = '';
+
+            seniors.forEach((snr, index) => {
+                container.innerHTML += `
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                        ${snr}
+                        <button onclick="deleteSenior(${index})" class="text-slate-400 hover:text-rose-600 transition-colors ml-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </span>
+                `;
+            });
+        }
+
+        // Yeni Kıdemli Ekleme Formu
+        document.getElementById('addSeniorForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('newSeniorName');
+            const name = input.value.trim();
+
+            if (name && !seniors.includes(name)) {
+                seniors.push(name);
+                localStorage.setItem('ls_seniors_v2', JSON.stringify(seniors));
+                renderSeniorOptions();
+                renderSeniorBadges();
+                input.value = '';
+            }
+        });
+
+        // Kıdemli Silme
+        function deleteSenior(index) {
+            seniors.splice(index, 1);
+            localStorage.setItem('ls_seniors_v2', JSON.stringify(seniors));
+            renderSeniorOptions();
+            renderSeniorBadges();
+        }
+
+        // Ziyaret Başvurusu Gönderimi
+        document.getElementById('visitApplicationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const newVisit = {
+                id: Date.now(),
+                student: document.getElementById('appStudent').value,
+                senior: document.getElementById('appSenior').value,
+                date: document.getElementById('appDate').value,
+                slot: document.getElementById('appTimeSlot').value,
+                note: document.getElementById('appNote').value.trim(),
+                status: 'Bekliyor'
             };
 
-            // Tümünü Temizleme (Kıdemli ve Öğrenci Tüm Ziyaret Verileri)
-            clearAllBtn.addEventListener('click', () => {
-                if (confirm('Tüm kayıtlı ziyaret verilerini (öğrenci ve kıdemli kayıtlarını) silmek istediğinize emin misiniz?')) {
-                    visits = [];
-                    localStorage.removeItem('ls_visits');
-                    renderVisits();
-                }
+            visits.unshift(newVisit);
+            localStorage.setItem('ls_visits_v2', JSON.stringify(visits));
+            
+            renderTable();
+            document.getElementById('visitApplicationForm').reset();
+            switchTab('schedule');
+        });
+
+        // Tabloyu Çizdirme
+        function renderTable() {
+            const tbody = document.getElementById('scheduleTableBody');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const selectedSenior = document.getElementById('filterSenior').value;
+
+            tbody.innerHTML = '';
+
+            let filtered = visits.filter(v => {
+                const matchesSearch = v.student.toLowerCase().includes(searchQuery) || 
+                                      v.senior.toLowerCase().includes(searchQuery) ||
+                                      (v.note && v.note.toLowerCase().includes(searchQuery));
+                const matchesSenior = selectedSenior === 'ALL' || v.senior === selectedSenior;
+                return matchesSearch && matchesSenior;
             });
 
-            // İlk Yükleme
-            renderVisits();
-        });
+            document.getElementById('totalRecordBadge').innerText = `${filtered.length} Kayıt`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-slate-400">
+                            <i class="fa-regular fa-folder-open text-2xl mb-2 block"></i>
+                            Kayıtlı ziyaret bulunamadı.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+                const statusColor = v.status === 'Onaylandı' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200';
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-semibold text-slate-800">
+                        <div>${v.date}</div>
+                        <div class="text-[10px] text-slate-400 font-normal">${v.slot}</div>
+                    </td>
+                    <td class="py-3.5 px-4 font-bold text-slate-900">${v.student}</td>
+                    <td class="py-3.5 px-4">
+                        <span class="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                            ${v.senior}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-slate-500 max-w-xs truncate">${v.note || '-'}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <span onclick="toggleStatus(${v.id})" class="cursor-pointer border px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide inline-block ${statusColor}">
+                            ${v.status}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button onclick="deleteVisit(${v.id})" class="text-slate-400 hover:text-rose-600 transition-colors p-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Durum Değiştir (Onaylandı / Bekliyor)
+        function toggleStatus(id) {
+            visits = visits.map(v => {
+                if (v.id === id) {
+                    v.status = v.status === 'Bekliyor' ? 'Onaylandı' : 'Bekliyor';
+                }
+                return v;
+            });
+            localStorage.setItem('ls_visits_v2', JSON.stringify(visits));
+            renderTable();
+        }
+
+        // Ziyaret Sil
+        function deleteVisit(id) {
+            visits = visits.filter(v => v.id !== id);
+            localStorage.setItem('ls_visits_v2', JSON.stringify(visits));
+            renderTable();
+        }
+
+        // Tüm Ziyaretleri Silme
+        function clearAllVisits() {
+            if (confirm('Tüm ziyaret kayıtlarını silmek istediğinizden emin misiniz?')) {
+                visits = [];
+                localStorage.setItem('ls_visits_v2', JSON.stringify([]));
+                renderTable();
+            }
+        }
+
+        // Kıdemlileri Varsayılana Sıfırlama
+        function resetSeniorsToDefault() {
+            if (confirm('Kıdemli listesini varsayılana döndürmek istiyor musunuz?')) {
+                seniors = [...DEFAULT_SENIORS];
+                localStorage.setItem('ls_seniors_v2', JSON.stringify(seniors));
+                renderSeniorOptions();
+                renderSeniorBadges();
+                renderTable();
+            }
+        }
+
+        // Görsel Yap (PNG Export)
+        function exportToPNG() {
+            const area = document.getElementById('captureArea');
+            html2canvas(area).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'ziyaret-cizelgesi.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        // PDF İndir (PDF Export)
+        function exportToPDF() {
+            const area = document.getElementById('captureArea');
+            html2canvas(area).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                doc.addImage(imgData, 'PNG', 0, 10, imgWidth, imgHeight);
+                doc.save('ziyaret-cizelgesi.pdf');
+            });
+        }
     </script>
 </body>
 </html>
- 
