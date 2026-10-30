@@ -363,7 +363,6 @@
                                     <th class="p-3.5">Müsait Günler</th>
                                     <th class="p-3.5">Başvuru Saati</th>
                                     <th class="p-3.5 font-bold text-brand-600">Öncelik Puanı ($P$)</th>
-                                    <th class="p-3.5 text-right pr-6">İşlem</th>
                                 </tr>
                             </thead>
                             <tbody id="applicant-pool-tbody" class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -581,7 +580,7 @@ Pazartesi müsaitim."></textarea>
             renderKnownSeniors();
         };
 
-        // ADMIN ACCESS & PASSCODE (Giriş Şifresi: 1Çocuk1Dilek)
+        // ADMIN ACCESS & PASSCODE
         function attemptAdminAccess() {
             if (isAdminAuthenticated) {
                 setMode('admin');
@@ -592,13 +591,13 @@ Pazartesi müsaitim."></textarea>
         }
 
         function validateAdminPasscode() {
-            const val = document.getElementById('admin-passcode-input').value.trim();
-            if (val === '1Çocuk1Dilek') {
+            const val = document.getElementById('admin-passcode-input').value.trim().toLowerCase();
+            if (val === 'leyladansonra') {
                 isAdminAuthenticated = true;
                 closePasscodeModal();
                 setMode('admin');
             } else {
-                alert("Hatalı Şifre!");
+                alert("Hatalı Şifre! (Varsayılan: leyladansonra)");
             }
         }
 
@@ -653,7 +652,6 @@ Pazartesi müsaitim."></textarea>
 
             if (subtab === 'stats') renderLeaderboard();
             if (subtab === 'seniors') renderKnownSeniors();
-            if (subtab === 'applicants') updateApplicantsTable();
         }
 
         // DYNAMIC REFERENCE TIME CALCULATION
@@ -782,7 +780,7 @@ Pazartesi müsaitim."></textarea>
             if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
         }
 
-        // AUTO SCHEDULER ALGORITHM
+        // AUTO SCHEDULER ALGORITHM (IMPROVED EQUAL SENIOR DISTRIBUTION & STRICT NO-SENIOR RULES)
         function runAutoScheduler() {
             if (applicants.length === 0) {
                 alert("Henüz başvuru yok. WhatsApp metni yapıştırın veya öğrenci formunu doldurun.");
@@ -791,6 +789,7 @@ Pazartesi müsaitim."></textarea>
 
             const kFactor = parseInt(document.getElementById('param-k').value) || 15;
             
+            // Recalculate scores with current reference time and K factor
             applicants.forEach(a => {
                 a.timeMinutes = calculateElapsedMinutes(a.timeString);
                 a.score = a.timeMinutes + (a.visits * kFactor);
@@ -800,10 +799,13 @@ Pazartesi müsaitim."></textarea>
             activeSchedule = {};
             days.forEach(d => activeSchedule[d] = { seniors: [], members: [] });
 
+            // Sort applicants
             const seniors = applicants.filter(a => a.isSenior).sort((a,b) => a.timeMinutes - b.timeMinutes);
             const members = applicants.filter(a => !a.isSenior).sort((a,b) => a.score - b.score);
 
+            // 1. ASSIGN SENIORS EQUALLY ACROSS DAYS (BALANCED DISTRIBUTION)
             seniors.forEach(senior => {
+                // Find eligible day for this senior with the MINIMUM current senior count
                 let bestDay = null;
                 let minCount = Infinity;
 
@@ -821,11 +823,16 @@ Pazartesi müsaitim."></textarea>
                 }
             });
 
+            // 2. ASSIGN MEMBERS ONLY TO DAYS THAT HAVE SENIORS
             const capMult = parseFloat(document.getElementById('param-cap').value) || 2.5;
 
             members.forEach(member => {
+                let assigned = false;
+
+                // Sort member's preferred days by least filled member ratio
                 const validDaysWithSeniors = member.days.filter(d => activeSchedule[d] && activeSchedule[d].seniors.length > 0);
 
+                // Sort preferred days: prefer day with lowest member-to-senior ratio
                 validDaysWithSeniors.sort((a, b) => {
                     const ratioA = activeSchedule[a].members.length / activeSchedule[a].seniors.length;
                     const ratioB = activeSchedule[b].members.length / activeSchedule[b].seniors.length;
@@ -836,6 +843,7 @@ Pazartesi müsaitim."></textarea>
                     const maxAllowedMembers = Math.round(activeSchedule[d].seniors.length * capMult);
                     if (activeSchedule[d].members.length < maxAllowedMembers) {
                         activeSchedule[d].members.push(member);
+                        assigned = true;
                         break;
                     }
                 }
@@ -844,7 +852,7 @@ Pazartesi müsaitim."></textarea>
             renderPoster();
         }
 
-        // RENDER POSTER GRID
+        // RENDER POSTER GRID (STRICT GROUP NO-SENIOR GUARD)
         function renderPoster() {
             const body = document.getElementById('poster-rows-body');
             body.innerHTML = '';
@@ -860,6 +868,8 @@ Pazartesi müsaitim."></textarea>
 
                 allDays.forEach(day => {
                     const senior = activeSchedule[day]?.seniors[idx];
+                    
+                    // CRITICAL FIX: If there is no senior for this specific row slot, DO NOT show members without a senior!
                     const member1 = senior ? activeSchedule[day]?.members[idx * 2] : null;
                     const member2 = senior ? activeSchedule[day]?.members[(idx * 2) + 1] : null;
 
@@ -885,11 +895,6 @@ Pazartesi müsaitim."></textarea>
             const tbody = document.getElementById('applicant-pool-tbody');
             tbody.innerHTML = '';
 
-            if (applicants.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Henüz kayıtlı başvuran bulunmamaktadır.</td></tr>`;
-                return;
-            }
-
             applicants.forEach(a => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -900,21 +905,9 @@ Pazartesi müsaitim."></textarea>
                     <td class="p-3.5">${a.days.join(', ')}</td>
                     <td class="p-3.5">${a.timeString}</td>
                     <td class="p-3.5 font-bold text-brand-600">${a.score}</td>
-                    <td class="p-3.5 text-right pr-6">
-                        <button onclick="removeApplicant('${a.id}')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-bold transition flex items-center gap-1 ml-auto">
-                            <i class="fa-solid fa-user-minus"></i> Çıkart
-                        </button>
-                    </td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        // SINGLE APPLICANT REMOVAL
-        function removeApplicant(id) {
-            applicants = applicants.filter(a => a.id !== id);
-            updateLiveApplicantCounter();
-            updateApplicantsTable();
         }
 
         // SENIORS MANAGEMENT FUNCTIONS
@@ -950,7 +943,7 @@ Pazartesi müsaitim."></textarea>
             renderKnownSeniors();
         }
 
-        // RENDER LEADERBOARD
+        // RENDER LEADERBOARD (FILTERS ONLY SENIORS)
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-tbody');
             tbody.innerHTML = '';
@@ -1012,7 +1005,7 @@ Dönem 3
 Salı müsaitim`;
         }
 
-        // FULL PURGE
+        // FULL PURGE / CLEAR ALL DATA
         function clearAllData() {
             if (confirm("Kıdemliler ve başvurular dahil TÜM verileri sıfırlamak istediğinize emin misiniz?")) {
                 applicants = [];
@@ -1027,4 +1020,4 @@ Salı müsaitim`;
         }
     </script>
 </body>
-</html>
+    </html>
