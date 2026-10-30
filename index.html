@@ -1,1023 +1,566 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leyla'dan Sonra - Ziyaret Başvuru & Çizelge Yönetimi</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
-    <!-- html2canvas for Image Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        },
-                        leyla: {
-                            bg: '#38c2d9',
-                            darkBg: '#2ebad1',
-                            card: '#0284c7',
-                            accent: '#38bdf8'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        handwriting: ['Caveat', 'cursive']
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        .leyla-title {
-            font-family: 'Caveat', cursive;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #0284c7;
-            border-radius: 4px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2a9cbc">
+<title>Leyla’dan Sonra | Ziyaret Yönetimi</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg: #eef6f8;
+  --blue: #2a9cbc;
+  --dark: #12566c;
+  --teal: #62c7c8;
+  --ink: #0d3342;
+  --line: #d6e6ea;
+  --muted: #6b8790;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Nunito', sans-serif; color: var(--ink); background: #eef6f8; position: relative; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, rgba(42, 156, 188, 0.08) 0%, rgba(238, 246, 248, 1) 100%);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; border: 0; border-radius: 9px; padding: 10px 15px; font-weight: 800; background: #e1eff2; color: var(--dark); transition: background 0.15s ease; }
+button:hover { filter: brightness(.95); }
+.pri { background: var(--blue); color: #fff; }
+.dng { background: #ffe6e6; color: #a32e37; }
+.top { background: linear-gradient(110deg, var(--dark), var(--blue)); color: #fff; padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand svg { width: 44px; height: 44px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; padding: 4px; }
+.brand b { font: 700 30px 'Caveat', cursive; line-height: 1; }
+.brand small { display: block; opacity: .8; font-size: 11px; }
+main { max-width: 1280px; margin: 22px auto; padding: 0 14px; }
+.panel { background: rgba(255, 255, 255, 0.95); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(13, 51, 66, 0.03); }
+h2 { margin: 0 0 6px; font-size: 20px; color: var(--dark); }
+.sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+label { display: block; font-weight: 900; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cfe0e4; border-radius: 9px; background: #fbfdfd; color: var(--ink); }
+textarea { min-height: 110px; }
+.days { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+.days label { display: flex; gap: 6px; align-items: center; background: #eaf4f6; padding: 9px 12px; border-radius: 9px; margin: 0; cursor: pointer; text-transform: none; }
+.days input { width: auto; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; align-items: center; }
+.tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.tabs .on { background: var(--blue); color: #fff; }
+.hidden { display: none !important; }
+.msg { padding: 11px 13px; border-radius: 9px; margin: 10px 0; font-size: 13px; line-height: 1.6; font-weight: 700; }
+.ok { background: #e6f5ec; color: #176b43; }
+.warn { background: #fff3e0; color: #7d4e0c; }
+.err { background: #ffeaea; color: #a32d35; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 12px 0; }
+.stats div { background: #eef6f8; border-radius: 11px; padding: 12px; }
+.stats b { display: block; font-size: 24px; color: var(--dark); }
+.stats span { font-size: 12px; color: var(--muted); font-weight: 800; }
+.tw { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 9px; border-bottom: 1px solid #e5eef0; text-align: left; }
+th { background: #eef6f8; }
+td button { padding: 5px 9px; font-size: 11px; }
+.tag { background: #e3f3ea; color: #21724d; border-radius: 20px; padding: 3px 8px; font-size: 11px; font-weight: 900; }
+.shell { overflow-x: auto; padding-bottom: 10px; }
+#poster { width: 1200px; height: 900px; position: relative; overflow: hidden; padding: 26px 30px; color: #071f29; background: #2a9cbc; background: linear-gradient(135deg, #2a9cbc 0%, #12566c 100%); }
+#poster > *:not(.wm) { position: relative; z-index: 2; }
+.pt { text-align: center; margin-bottom: 14px; }
+.pt h1 { margin: 0; font: 700 70px 'Caveat', cursive; line-height: 1; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+.pt p { margin: 0; font: 500 38px 'Caveat', cursive; color: #e1eff2; }
+.pg { display: grid; grid-template-columns: 1.05fr repeat(5, 1fr); gap: 4px; }
+.pc { border: 3px solid #fff; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 106px; padding: 6px 4px; gap: 3px; font-size: 18px; line-height: 1.2; color: #071f29; }
+.pc.h { min-height: 54px; font-size: 26px; font-weight: 900; background: rgba(255, 255, 255, 0.45); color: #071f29; }
+.pc.l { font-size: 25px; font-weight: 900; background: rgba(18, 86, 108, 0.45); color: #fff; }
+.pc b { font-weight: 900; color: #0d3342; }
+.demo { background: #eef6f8; border-radius: 11px; padding: 10px 14px; margin: 10px 0; }
+.demo summary { cursor: pointer; font-weight: 800; color: var(--dark); }
+.mb { cursor: pointer; border-radius: 6px; padding: 0 5px; }
+.mb.sel { background: #fff; color: #0d3342; font-weight: bold; }
+.chip { display: inline-block; background: #fff; border: 1px solid #cfe0e4; margin: 3px; padding: 3px 9px; font-weight: 700; border-radius: 6px; }
+.chip.sel { background: var(--blue); color: #fff; }
+.pc[data-g] { cursor: pointer; }
+#poster > .lt { position: absolute; left: 326px; top: 592px; font: 500 92px/.86 'Caveat', cursive; color: #e9ffff; opacity: .15; pointer-events: none; z-index: 1; }
+.lt span { margin-left: 78px; }
+.wm-svg { position: absolute; right: -50px; bottom: -50px; width: 500px; height: 500px; opacity: 0.08; pointer-events: none; z-index: 1; }
+@media(max-width:700px){ .panel { padding: 14px; } }
+@media print {
+  @page { size: landscape; margin: 0; }
+  body * { visibility: hidden; }
+  #poster, #poster * { visibility: visible; }
+  #poster { position: fixed; left: 0; top: 0; zoom: .8; }
+}
+</style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Top Navigation Header -->
-    <header class="bg-gradient-to-r from-brand-800 via-brand-700 to-brand-900 text-white shadow-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
-            
-            <!-- Logo & Title -->
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-inner">
-                    <i class="fa-solid fa-heart-circle-check text-2xl text-brand-200"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
-                        Leyla'dan Sonra
-                        <span id="role-badge" class="text-[10px] bg-emerald-500/30 text-emerald-100 border border-emerald-300/30 font-semibold px-2 py-0.5 rounded-full">Öğrenci Portalı</span>
-                    </h1>
-                    <p class="text-[11px] text-brand-200/80">Hastane Ziyaretleri Otomasyon Portalı</p>
-                </div>
-            </div>
+<header class="top">
+ <div class="brand">
+  <svg viewBox="0 0 100 100" fill="none">
+    <path d="M50 85 C20 55 10 38 25 22 C38 8 50 25 50 25 C50 25 62 8 75 22 C90 38 80 55 50 85 Z" fill="#ffffff"/>
+  </svg>
+  <div><b>Leyla’dan Sonra</b><small>Ziyaret organizasyon sistemi</small></div>
+ </div>
+ <div class="row" style="margin:0">
+  <button onclick="page('app')">Başvuru</button>
+  <button onclick="page('adm')">Yönetim</button>
+ </div>
+</header>
 
-            <!-- Mode Switcher & Admin Toggle -->
-            <div class="flex items-center gap-2 bg-brand-950/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
-                <button id="nav-btn-form" onclick="setMode('student')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-brand-800 shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-pen text-brand-600"></i> Öğrenci Formu
-                </button>
-                <button id="nav-btn-admin" onclick="attemptAdminAccess()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 text-brand-100 hover:text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-gear text-amber-300"></i> Yönetim Paneli
-                    <span id="live-applicant-count" class="bg-amber-400 text-slate-900 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">0</span>
-                </button>
-            </div>
+<main>
+<!-- BAŞVURU FORMU -->
+<section id="app" class="panel">
+ <h2>Haftalık ziyaret başvurusu</h2>
+ <p class="sub">Bilgilerini gir, müsait olduğun günleri seç. Başvuru zamanın öncelik puanına yazılır.</p>
+ <div class="grid">
+  <div><label>Ad soyad</label><input id="fn" placeholder="Örn: Ahmet Yılmaz"></div>
+  <div><label>Dönem</label>
+    <select id="ft">
+      <option value="">Seç</option>
+      <option>Dönem 1</option>
+      <option>Dönem 2</option>
+      <option>Dönem 3</option>
+      <option>Dönem 4</option>
+      <option>Dönem 5</option>
+      <option>Dönem 6</option>
+    </select>
+  </div>
+  <div><label>Toplam ziyaret sayın</label><input id="fv" type="number" min="0" value="0"></div>
+ </div>
+ <label style="margin-top:14px">Müsait olduğun günler</label>
+ <div class="days" id="fd"></div>
+ <button class="pri" onclick="apply()">Başvuruyu kaydet</button>
+ <div id="fm"></div>
+ <p class="sub" style="margin-top:12px">Başvurular şimdilik bu cihazda saklanır. Yönetim panelinden WhatsApp aktarımı ile toplu başvuru alabilirsiniz.</p>
+</section>
 
-        </div>
-    </header>
+<!-- GİRİŞ PANELİ -->
+<section id="gate" class="panel hidden">
+ <h2>Yönetim girişi</h2>
+ <div class="row">
+  <input id="pw1" type="password" placeholder="Şifre" style="max-width:260px" onkeydown="if(event.key==='Enter')unlock()">
+  <button class="pri" onclick="unlock()">Giriş</button>
+ </div>
+ <div id="gm"></div>
+</section>
 
-    <!-- MAIN VIEW CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- YÖNETİM SEKMELERİ -->
+<section id="adm" class="hidden">
+ <div class="tabs">
+  <button id="t-sch" class="on" onclick="tab('sch')">Çizelge</button>
+  <button id="t-lst" onclick="tab('lst')">Başvurular</button>
+  <button id="t-set" onclick="tab('set')">Ayarlar</button>
+ </div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 1: STUDENT APPLICATION FORM (PUBLIC)  -->
-        <!-- ========================================== -->
-        <section id="view-student" class="space-y-6 max-w-2xl mx-auto">
-            
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-                
-                <!-- Form Hero Header -->
-                <div class="bg-gradient-to-br from-brand-600 via-brand-500 to-teal-500 p-6 sm:p-8 text-white text-center relative overflow-hidden">
-                    <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl">
-                        <i class="fa-solid fa-child"></i>
-                    </div>
-                    <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wide uppercase mb-2 backdrop-blur-sm">Haftalık Ziyaret Başvurusu</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold">Minik Kalplere Dokunmaya Var Mısın?</h2>
-                    <p class="text-xs sm:text-sm text-brand-100 mt-2 max-w-md mx-auto">Müsait olduğun günleri seçerek hastane ziyareti başvurusunu hemen tamamlayabilirsin.</p>
-                </div>
+ <div id="sch" class="panel">
+  <h2>Haftalık çizelge</h2>
+  <p class="sub">Üyeler P = T + (Z × ağırlık) puanına göre sıralanır, küçük puan önce yerleşir.</p>
+  <div class="row">
+   <button class="pri" onclick="generate()">Çizelgeyi oluştur</button>
+   <button onclick="png()">PNG indir</button>
+   <button onclick="window.print()">Yazdır</button>
+   <button onclick="if(SEL){put(SEL,null);done([])}">Seçileni yedeğe al</button>
+   <button class="dng" onclick="clearSch()">Çizelgeyi temizle</button>
+  </div>
 
-                <!-- Form Content -->
-                <form id="student-form" onsubmit="handleStudentSubmit(event)" class="p-6 sm:p-8 space-y-5">
-                    
-                    <!-- Ad Soyad -->
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Ad Soyad <span class="text-rose-500">*</span></label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
-                            <input type="text" id="form-name" required placeholder="Adınız Soyadınız" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-slate-50/50 transition">
-                        </div>
-                    </div>
+  <details class="demo">
+   <summary>Sistemi denemek için deneme verisi</summary>
+   <p class="sub">Gerçek başvuru olmadan çizelgeyi denemek için sahte üye ve kıdemli oluşturur.</p>
+   <div class="row">
+    <select id="dn" style="width:auto">
+      <option value="30">30 üye</option>
+      <option value="40">40 üye</option>
+      <option value="50" selected>50 üye</option>
+      <option value="60">60 üye</option>
+    </select>
+    <select id="ds" style="width:auto">
+      <option value="6">6 kıdemli</option>
+      <option value="9" selected>9 kıdemli</option>
+      <option value="12">12 kıdemli</option>
+    </select>
+    <button class="pri" onclick="demo()">Deneme çizelgesi oluştur</button>
+   </div>
+   <div id="dc"></div>
+  </details>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Dönem -->
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Tıp Dönemi <span class="text-rose-500">*</span></label>
-                            <select id="form-term" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-slate-50/50 transition">
-                                <option value="Dönem 1">Dönem 1</option>
-                                <option value="Dönem 2" selected>Dönem 2</option>
-                                <option value="Dönem 3">Dönem 3</option>
-                                <option value="Dönem 4">Dönem 4</option>
-                                <option value="Dönem 5">Dönem 5</option>
-                                <option value="Dönem 6">Dönem 6 (İntörn)</option>
-                            </select>
-                        </div>
+  <p class="sub">Düzenlemek için bir üyenin adına dokun, sonra gideceği kutuya ya da yer değiştireceği üyeye dokun.</p>
+  <div id="stats"></div>
+  <div id="warn"></div>
 
-                        <!-- Ziyaret Sayısı -->
-                        <div class="space-y-1.5">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Geçmiş Ziyaret Sayısı <span class="text-rose-500">*</span></label>
-                            <input type="number" id="form-visits" min="0" max="99" value="0" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-slate-50/50 transition">
-                            <p class="text-[10px] text-slate-400">Daha önce hiç gitmediysen 0 bırakın.</p>
-                        </div>
-                    </div>
-
-                    <!-- Rol Seçimi -->
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Kulüp Rolü <span class="text-rose-500">*</span></label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="flex items-center justify-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer has-[:checked]:bg-brand-500 has-[:checked]:text-white has-[:checked]:border-brand-500 transition font-semibold text-xs text-slate-700">
-                                <input type="radio" name="form-role" value="member" checked class="sr-only">
-                                Normal Üye
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer has-[:checked]:bg-brand-500 has-[:checked]:text-white has-[:checked]:border-brand-500 transition font-semibold text-xs text-slate-700">
-                                <input type="radio" name="form-role" value="senior" class="sr-only">
-                                Kıdemli Üye
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Müsait Olunan Günler -->
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Müsait Olduğunuz Günler <span class="text-rose-500">*</span></label>
-                        <div class="grid grid-cols-5 gap-2">
-                            <label class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold cursor-pointer has-[:checked]:bg-brand-600 has-[:checked]:text-white has-[:checked]:border-brand-600 transition">
-                                <input type="checkbox" name="form-days" value="Pazartesi" checked class="sr-only"> Pzt
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold cursor-pointer has-[:checked]:bg-brand-600 has-[:checked]:text-white has-[:checked]:border-brand-600 transition">
-                                <input type="checkbox" name="form-days" value="Salı" class="sr-only"> Sal
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold cursor-pointer has-[:checked]:bg-brand-600 has-[:checked]:text-white has-[:checked]:border-brand-600 transition">
-                                <input type="checkbox" name="form-days" value="Çarşamba" class="sr-only"> Çar
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold cursor-pointer has-[:checked]:bg-brand-600 has-[:checked]:text-white has-[:checked]:border-brand-600 transition">
-                                <input type="checkbox" name="form-days" value="Perşembe" class="sr-only"> Per
-                            </label>
-                            <label class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold cursor-pointer has-[:checked]:bg-brand-600 has-[:checked]:text-white has-[:checked]:border-brand-600 transition">
-                                <input type="checkbox" name="form-days" value="Cuma" class="sr-only"> Cum
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-500/25 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i> Ziyaret Başvurusunu Gönder
-                    </button>
-
-                </form>
-
-            </div>
-
-            <!-- Toast Success Message -->
-            <div id="form-success-toast" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl shadow-sm flex items-start gap-3">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-xl mt-0.5"></i>
-                <div class="text-xs space-y-1">
-                    <h4 class="font-bold text-emerald-900 text-sm">Başvurunuz Başarıyla Alındı!</h4>
-                    <p>Zaman damganız milisaniye hassasiyetiyle sisteme kaydedildi. Koordinatörler listeyi oluşturduğunda bilgilendirileceksiniz.</p>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- ========================================== -->
-        <!-- VIEW 2: COORDINATOR ADMIN PANEL (ADMIN)    -->
-        <!-- ========================================== -->
-        <section id="view-admin" class="hidden space-y-8">
-            
-            <!-- Admin Sub-tabs Bar -->
-            <div class="bg-white p-2 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <button id="admin-subtab-btn-generator" onclick="setAdminSubtab('generator')" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-600 text-white shadow-sm flex items-center gap-1.5">
-                        <i class="fa-solid fa-calendar-days"></i> Çizelge Oluşturucu
-                    </button>
-                    <button id="admin-subtab-btn-applicants" onclick="setAdminSubtab('applicants')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
-                        <i class="fa-solid fa-users"></i> Başvuran Havuzu (<span id="cnt-subtab">0</span>)
-                    </button>
-                    <button id="admin-subtab-btn-seniors" onclick="setAdminSubtab('seniors')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-shield text-brand-600"></i> Kıdemli Yönetimi
-                    </button>
-                    <button id="admin-subtab-btn-stats" onclick="setAdminSubtab('stats')" class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
-                        <i class="fa-solid fa-trophy text-amber-500"></i> Ayın Kıdemlisi & İstatistik
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="openWhatsAppModal()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Metni Yapıştır
-                    </button>
-                    <button onclick="clearAllData()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-semibold transition">
-                        Tüm Verileri Temizle
-                    </button>
-                </div>
-            </div>
-
-            <!-- ADMIN SUBTAB 1: GENERATOR -->
-            <div id="admin-sub-generator" class="space-y-6">
-                
-                <!-- Settings & Action -->
-                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    
-                    <div class="md:col-span-8 space-y-3">
-                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-brand-600"></i> Algoritma Parametreleri
-                        </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <!-- Dinamik Referans Saat Seçimi -->
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 block mb-1">Referans Başlangıç Saati:</label>
-                                <input type="time" id="param-ref-time" value="11:00" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
-                                <p class="text-[10px] text-slate-400 mt-1">Gruptaki form açılış saati</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 block mb-1">
-                                    Ziyaret Ağırlığı ($K$): <span id="k-disp" class="font-bold text-brand-600">15 Dk</span>
-                                </label>
-                                <input type="range" id="param-k" min="5" max="30" step="5" value="15" oninput="document.getElementById('k-disp').innerText = this.value + ' Dk'" class="w-full accent-brand-600 cursor-pointer">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 block mb-1">Kıdemli Başına Üye Kontenjanı:</label>
-                                <select id="param-cap" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
-                                    <option value="2">2 Üye (Sıkı Dengeli)</option>
-                                    <option value="2.5" selected>2 - 3 Üye (Dinamik)</option>
-                                    <option value="3">3 Üye (Esnek)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-4 flex flex-col gap-2">
-                        <button onclick="runAutoScheduler()" class="w-full py-3.5 bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white rounded-xl font-extrabold text-sm shadow-md shadow-brand-500/20 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> ÇİZELGEYİ OTOMATİK OLUŞTUR
-                        </button>
-                    </div>
-
-                </div>
-
-                <!-- OUTPUT VISUAL POSTER (LEYLA'DAN SONRA BLUE DESIGN) -->
-                <div id="poster-wrapper" class="space-y-4">
-                    
-                    <!-- Action bar -->
-                    <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                        <div class="text-xs text-slate-500 font-medium">
-                            * Çizelgeyi oluşturduktan sonra görsel formatında bilgisayarınıza indirebilirsiniz.
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="downloadPosterImage()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-download"></i> Görsel Olarak İndir (PNG)
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Poster HTML Container for html2canvas -->
-                    <div id="official-poster-canvas" class="bg-[#2ebad1] p-6 sm:p-10 rounded-3xl shadow-2xl text-slate-900 min-w-[950px] border-4 border-white select-none">
-                        
-                        <!-- Header -->
-                        <div class="text-center space-y-1 mb-8">
-                            <h1 class="leyla-title text-5xl sm:text-6xl font-extrabold text-slate-900 tracking-wide drop-shadow-sm">
-                                Leyla'dan Sonra Ziyaret Listesi
-                            </h1>
-                            <p class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">
-                                Haftalık Ziyaret Çizelgesi
-                            </p>
-                        </div>
-
-                        <!-- Main Table Grid -->
-                        <div class="border-2 border-white rounded-2xl overflow-hidden bg-[#38c2d9]/40 backdrop-blur-sm shadow-inner">
-                            
-                            <!-- Days Header -->
-                            <div class="grid grid-cols-6 border-b-2 border-white text-center font-extrabold text-sm sm:text-base bg-white/20">
-                                <div class="p-3 border-r-2 border-white flex items-center justify-center">12.00/13.00</div>
-                                <div class="p-3 border-r-2 border-white">Pazartesi</div>
-                                <div class="p-3 border-r-2 border-white">Salı</div>
-                                <div class="p-3 border-r-2 border-white">Çarşamba</div>
-                                <div class="p-3 border-r-2 border-white">Perşembe</div>
-                                <div class="p-3">Cuma</div>
-                            </div>
-
-                            <!-- 6 Team Rows -->
-                            <div id="poster-rows-body" class="divide-y-2 divide-white text-xs sm:text-sm">
-                                <!-- Dynamic Render -->
-                            </div>
-
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="mt-6 flex items-center justify-between text-xs font-bold text-slate-900 opacity-90">
-                            <span>* Kalın yazılı ilk isimler Kıdemli grup liderleridir.</span>
-                            <span class="leyla-title text-3xl font-extrabold">Leyla'dan Sonra</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- ADMIN SUBTAB 2: APPLICANTS POOL -->
-            <div id="admin-sub-applicants" class="hidden space-y-4">
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                        <h3 class="font-bold text-slate-800 text-sm">Gelen Başvurular & Öncelik Puanları</h3>
-                        <span class="text-xs text-slate-400">Puan ne kadar düşükse öncelik o kadar yüksektir.</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
-                                    <th class="p-3.5 pl-6">Ad Soyad</th>
-                                    <th class="p-3.5">Dönem</th>
-                                    <th class="p-3.5">Rol</th>
-                                    <th class="p-3.5">Ziyaret Sayısı</th>
-                                    <th class="p-3.5">Müsait Günler</th>
-                                    <th class="p-3.5">Başvuru Saati</th>
-                                    <th class="p-3.5 font-bold text-brand-600">Öncelik Puanı ($P$)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="applicant-pool-tbody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                                <!-- Dynamic Rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN SUBTAB 3: SENIORS MANAGEMENT -->
-            <div id="admin-sub-seniors" class="hidden space-y-6">
-                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 space-y-6">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-user-shield text-brand-600"></i> Kıdemli Listesi Yönetimi
-                            </h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Sistemde tanınacak ve otomatik kıdemli olarak işaretlenecek kişileri buradan yönetebilirsiniz.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3 max-w-md">
-                        <input type="text" id="new-senior-name" placeholder="Kıdemli Adı Soyadı..." class="flex-1 p-2.5 rounded-xl border border-slate-200 text-xs bg-slate-50">
-                        <button onclick="addKnownSenior()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition">
-                            Ekle
-                        </button>
-                    </div>
-
-                    <div class="border border-slate-200 rounded-xl overflow-hidden">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase">
-                                    <th class="p-3.5 pl-6">#</th>
-                                    <th class="p-3.5">Kıdemli Ad Soyad</th>
-                                    <th class="p-3.5 text-right pr-6">İşlem</th>
-                                </tr>
-                            </thead>
-                            <tbody id="known-seniors-tbody" class="divide-y divide-slate-100 font-medium">
-                                <!-- Dynamic Seniors List -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN SUBTAB 4: LEADERBOARD & STATS -->
-            <div id="admin-sub-stats" class="hidden space-y-6">
-                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-award text-amber-500"></i> Ayın Kıdemlisi Liderlik Tablosu
-                            </h3>
-                            <p class="text-xs text-slate-500 mt-0.5">* Bu tabloda SADECE Kıdemliler sıralanır. Normal üyeler dahil edilmez.</p>
-                        </div>
-                        <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 font-extrabold rounded-full text-xs">
-                            Kıdemli Kulübü
-                        </span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-brand-50 border border-brand-100 p-4 rounded-xl">
-                            <span class="text-xs font-semibold text-brand-700">Sistemdeki Aktif Kıdemliler</span>
-                            <h4 id="stat-volunteers" class="text-2xl font-extrabold text-brand-900">0</h4>
-                        </div>
-                        <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
-                            <span class="text-xs font-semibold text-amber-700">🏆 Ayın Lider Kıdemlisi</span>
-                            <h4 id="stat-top-senior" class="text-lg font-bold text-amber-900 truncate">-</h4>
-                        </div>
-                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
-                            <span class="text-xs font-semibold text-emerald-700">Kıdemli Ziyaret Toplamı</span>
-                            <h4 id="stat-total-visits" class="text-2xl font-extrabold text-emerald-900">0</h4>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase">
-                                    <th class="p-3.5 pl-6">Sıra</th>
-                                    <th class="p-3.5">Kıdemli Adı</th>
-                                    <th class="p-3.5">Rol Unvanı</th>
-                                    <th class="p-3.5 text-center">Toplam Ziyaret</th>
-                                    <th class="p-3.5 text-center">Derece / Ödül</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboard-tbody" class="divide-y divide-slate-100 font-medium">
-                                <!-- Dynamic Senior Leaderboard -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-xs">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
-            <p class="font-semibold text-slate-300">Leyla'dan Sonra Tıp Öğrencileri Sosyal Sorumluluk Projesi</p>
-            <p class="text-slate-500">Ziyaret Çizelgesi ve Otomasyon Yazılımı © 2026</p>
-        </div>
-    </footer>
-
-    <!-- MODAL: ADMIN PASSCODE PROMPT -->
-    <div id="modal-passcode" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
-            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-lock"></i>
-            </div>
-            <div>
-                <h3 class="font-bold text-slate-900 text-base">Yönetici Girişi</h3>
-                <p class="text-xs text-slate-500 mt-1">Yönetim paneline erişmek için şifreyi giriniz.</p>
-            </div>
-            <input type="password" id="admin-passcode-input" placeholder="Giriş Şifresi..." class="w-full p-3 rounded-xl border border-slate-200 text-center font-bold text-sm bg-slate-50 focus:ring-2 focus:ring-brand-500">
-            <div class="flex items-center gap-2 pt-2">
-                <button onclick="closePasscodeModal()" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-semibold">İptal</button>
-                <button onclick="validateAdminPasscode()" class="w-1/2 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20">Giriş Yap</button>
-            </div>
-        </div>
+  <div class="shell">
+   <div id="poster">
+    <svg class="wm-svg" viewBox="0 0 100 100" fill="#ffffff">
+      <path d="M50 85 C20 55 10 38 25 22 C38 8 50 25 50 25 C50 25 62 8 75 22 C90 38 80 55 50 85 Z"/>
+    </svg>
+    <div class="lt">Leyla’dan<br><span>Sonra</span></div>
+    <div class="pt">
+      <h1>Leyla’dan Sonra Ziyaret Listesi</h1>
+      <p id="pw"></p>
     </div>
+    <div class="pg" id="pg"></div>
+   </div>
+  </div>
+ </div>
 
-    <!-- MODAL: WHATSAPP BULK PASTE -->
-    <div id="modal-whatsapp" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-emerald-500 text-lg"></i>
-                    WhatsApp Mesaj Metni Yapıştır
-                </h3>
-                <button onclick="closeWhatsAppModal()" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            
-            <p class="text-xs text-slate-500">Gruba atılan mesajları kopyalayıp buraya yapıştırabilirsiniz. Sistem zamanı, adı, ziyaret sayısını ve günleri otomatik ayrıştıracaktır.</p>
+ <div id="lst" class="panel hidden">
+  <h2>Başvuru havuzu</h2>
+  <div class="row">
+    <button onclick="csv()">CSV dışa aktar</button>
+    <button class="dng" onclick="wipe()">Tüm verileri sil</button>
+  </div>
+  <div id="wc"></div>
+  <label>WhatsApp mesajlarını yapıştır</label>
+  <input id="waSkip" placeholder="Yok sayılacak isim (duyuruyu yazan kişi)" style="margin-bottom:8px">
+  <textarea id="wa" placeholder="Mesajları olduğu gibi yapıştır. Örnek:
+[29/10 20:24] Ad Soyad: Dönem 3, 6 ziyaret, Pazartesi Salı
+29.10.2026 10:03 - Ad Soyad: 2. dönem 0 ziyaret cuma"></textarea>
+  <p class="sub">Dönem, ziyaret sayısı ve gün yazan herhangi bir cümle okunur. Ziyaret sayısı bulunamazsa 0 yazılır ve ⚠ ile işaretlenir.</p>
+  <div class="row"><button class="pri" onclick="wa()">Mesajlardan aktar</button></div>
+  <div id="wm2"></div>
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>Ad soyad</th>
+          <th>Dönem</th>
+          <th>Rol</th>
+          <th>Ziyaret</th>
+          <th>T (Dk)</th>
+          <th>Puan</th>
+          <th>Müsait Günler</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+ </div>
 
-            <textarea id="whatsapp-raw-input" rows="8" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 resize-none focus:ring-2 focus:ring-brand-500" placeholder="[24/10 11:01] Ahmet Utku Tatar: Ahmet Utku Tatar
-Dönem 2
-Daha önce hiç ziyarette bulunmadım.
-Pazartesi müsaitim."></textarea>
+ <div id="set" class="panel hidden">
+  <h2>Ayarlar</h2>
+  <div class="grid">
+   <div><label>Hafta başlığı</label><input id="sWeek" placeholder="26 - 30 Ekim 3. Hafta" onchange="sset()"></div>
+   <div><label>Duyuru zamanı (T = 0)</label><input id="sAn" type="datetime-local" onchange="sset()"></div>
+   <div><label>Ziyaret ağırlığı (dk)</label><input id="sW" type="number" min="0" onchange="sset()"></div>
+   <div><label>Onkoloji için en az ziyaret</label><input id="sOn" type="number" min="0" onchange="sset()"></div>
+   <div><label>Kıdemli başına üye</label>
+    <select id="sQ" onchange="sset()">
+      <option value="2">2</option>
+      <option value="2.5">2,5</option>
+      <option value="3">3</option>
+    </select>
+   </div>
+  </div>
+  <label style="margin-top:14px">Kıdemli isimleri (her satıra bir isim)</label>
+  <textarea id="sSen" onchange="sset()"></textarea>
+  <p class="sub">Kıdemlilerin sırası yazma zamanına göre belirlenir: bir günde ilk üç kıdemli Pediatri, sonraki üçü Onkoloji satırına girer.</p>
+ </div>
+</section>
+</main>
 
-            <div class="flex items-center justify-between pt-2">
-                <button onclick="loadSampleWhatsApp()" class="text-xs text-brand-600 hover:underline font-semibold">
-                    Örnek Format Yükle
-                </button>
-                <div class="flex items-center gap-2">
-                    <button onclick="closeWhatsAppModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-semibold">İptal</button>
-                    <button onclick="parseWhatsAppInput()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20">Sisteme Aktar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<script>
+"use strict";
+const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"];
+const KA = "lds_apps_v5", KS = "lds_set_v5", KSCH = "lds_sch_v5";
 
-    <!-- JAVASCRIPT APP LOGIC -->
-    <script>
-        // GLOBAL STATE
-        let currentMode = 'student';
-        let isAdminAuthenticated = false;
-        let currentAdminSubtab = 'generator';
-        let applicants = [];
-        let activeSchedule = {};
+const rd = (k, f) => {
+  try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch (e) { return f; }
+};
 
-        // Dynamic Known Seniors Array
-        let knownSeniors = [
-            "Ahmet Utku Tatar", "Zeynep Arslan", "Mehmet Yılmaz", "Ayşe Kaya",
-            "Caner Demir", "Fatma Çelik", "Burak Şahin", "Selin Aydın",
-            "Oğuzhan Koç", "Ece Yıldız"
-        ];
+let A = rd(KA, []);
+let S = Object.assign({ an: "", w: 15, on: 5, q: 2.5, week: "3. Hafta Ziyaret Programı", sen: "" }, rd(KS, {}));
+let SCH = rd(KSCH, null);
+let SEL = null;
 
-        // DUMMY SAMPLE DATA (10 Kıdemli + 20 Normal Üye)
-        const dummyApplicants = [
-            // 10 Kıdemli Üye
-            { id: 's1', name: 'Ahmet Utku Tatar', term: 'Dönem 2', visits: 12, isSenior: true, days: ['Pazartesi', 'Salı'], timeString: '11:01', timeMinutes: 1, score: 181 },
-            { id: 's2', name: 'Zeynep Arslan', term: 'Dönem 3', visits: 15, isSenior: true, days: ['Salı', 'Çarşamba'], timeString: '11:02', timeMinutes: 2, score: 227 },
-            { id: 's3', name: 'Mehmet Yılmaz', term: 'Dönem 4', visits: 9, isSenior: true, days: ['Çarşamba', 'Perşembe'], timeString: '11:02', timeMinutes: 2, score: 137 },
-            { id: 's4', name: 'Ayşe Kaya', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Perşembe', 'Cuma'], timeString: '11:03', timeMinutes: 3, score: 168 },
-            { id: 's5', name: 'Caner Demir', term: 'Dönem 2', visits: 8, isSenior: true, days: ['Pazartesi', 'Cuma'], timeString: '11:03', timeMinutes: 3, score: 123 },
-            { id: 's6', name: 'Fatma Çelik', term: 'Dönem 3', visits: 14, isSenior: true, days: ['Salı', 'Perşembe'], timeString: '11:04', timeMinutes: 4, score: 214 },
-            { id: 's7', name: 'Burak Şahin', term: 'Dönem 4', visits: 10, isSenior: true, days: ['Pazartesi', 'Çarşamba'], timeString: '11:05', timeMinutes: 5, score: 155 },
-            { id: 's8', name: 'Selin Aydın', term: 'Dönem 2', visits: 7, isSenior: true, days: ['Çarşamba', 'Cuma'], timeString: '11:05', timeMinutes: 5, score: 110 },
-            { id: 's9', name: 'Oğuzhan Koç', term: 'Dönem 3', visits: 13, isSenior: true, days: ['Salı', 'Cuma'], timeString: '11:06', timeMinutes: 6, score: 201 },
-            { id: 's10', name: 'Ece Yıldız', term: 'Dönem 2', visits: 6, isSenior: true, days: ['Pazartesi', 'Perşembe'], timeString: '11:07', timeMinutes: 7, score: 97 },
+const $ = id => document.getElementById(id);
 
-            // 20 Normal Üye
-            { id: 'm1', name: 'Merve Öztürk', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 1 },
-            { id: 'm2', name: 'Emre Karahan', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Pazartesi'], timeString: '11:02', timeMinutes: 2, score: 32 },
-            { id: 'm3', name: 'Büşra Yalçın', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 17 },
-            { id: 'm4', name: 'Kerem Aksoy', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 3 },
-            { id: 'm5', name: 'Deniz Güneş', term: 'Dönem 1', visits: 3, isSenior: false, days: ['Çarşamba'], timeString: '11:03', timeMinutes: 3, score: 48 },
-            { id: 'm6', name: 'İrem Polat', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Çarşamba'], timeString: '11:04', timeMinutes: 4, score: 4 },
-            { id: 'm7', name: 'Taha Erdem', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Perşembe'], timeString: '11:04', timeMinutes: 4, score: 19 },
-            { id: 'm8', name: 'Gamze Bulut', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Perşembe'], timeString: '11:05', timeMinutes: 5, score: 5 },
-            { id: 'm9', name: 'Barış Kılıç', term: 'Dönem 1', visits: 2, isSenior: false, days: ['Cuma'], timeString: '11:05', timeMinutes: 5, score: 35 },
-            { id: 'm10', name: 'Seda Korkmaz', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:06', timeMinutes: 6, score: 6 },
-            { id: 'm11', name: 'Kaan Tekin', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:07', timeMinutes: 7, score: 22 },
-            { id: 'm12', name: 'Gizem Avcı', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:08', timeMinutes: 8, score: 8 },
-            { id: 'm13', name: 'Onur Aslan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Çarşamba'], timeString: '11:09', timeMinutes: 9, score: 9 },
-            { id: 'm14', name: 'Hande Çakır', term: 'Dönem 2', visits: 4, isSenior: false, days: ['Perşembe'], timeString: '11:10', timeMinutes: 10, score: 70 },
-            { id: 'm15', name: 'Alperen Taş', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:10', timeMinutes: 10, score: 10 },
-            { id: 'm16', name: 'Ezgi Doğan', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Pazartesi'], timeString: '11:11', timeMinutes: 11, score: 41 },
-            { id: 'm17', name: 'Serkan Acar', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:12', timeMinutes: 12, score: 12 },
-            { id: 'm18', name: 'Ceren Sarı', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Çarşamba'], timeString: '11:13', timeMinutes: 13, score: 28 },
-            { id: 'm19', name: 'Tolga Özkan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Perşembe'], timeString: '11:14', timeMinutes: 14, score: 14 },
-            { id: 'm20', name: 'Yaren Koçak', term: 'Dönem 2', visits: 3, isSenior: false, days: ['Cuma'], timeString: '11:15', timeMinutes: 15, score: 60 }
-        ];
+const save = () => {
+  try {
+    localStorage.setItem(KA, JSON.stringify(A));
+    localStorage.setItem(KS, JSON.stringify(S));
+    if (SCH) localStorage.setItem(KSCH, JSON.stringify(SCH));
+  } catch (e) {}
+};
 
-        // INIT
-        window.onload = function() {
-            applicants = [...dummyApplicants];
-            updateLiveApplicantCounter();
-            renderKnownSeniors();
-        };
+const norm = v => String(v ?? "").toLocaleLowerCase("tr-TR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/\s+/g, " ").trim();
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-        // ADMIN ACCESS & PASSCODE
-        function attemptAdminAccess() {
-            if (isAdminAuthenticated) {
-                setMode('admin');
-            } else {
-                document.getElementById('modal-passcode').classList.remove('hidden');
-                document.getElementById('modal-passcode').classList.add('flex');
-            }
+const senSet = () => new Set(S.sen.split("\n").map(norm).filter(Boolean));
+const isSen = p => senSet().has(norm(p.name));
+const base = () => S.an ? new Date(S.an).getTime() : (A.length ? Math.min(...A.map(p => p.ts)) : Date.now());
+const T = p => Math.max(0, Math.round((p.ts - base()) / 60000));
+const P = p => T(p) + (Number(p.v) || 0) * S.w;
+
+// Gün Kutularını Render Et
+$("fd").innerHTML = DAYS.map(d => `<label><input type="checkbox" value="${d}"> ${d}</label>`).join("");
+
+function page(x) {
+  let ok = false;
+  try { ok = sessionStorage.getItem("lds_ok") === "1"; } catch (e) {}
+  if (x === "adm" && !ok) x = "gate";
+  ["app", "gate", "adm"].forEach(i => $(i).classList.toggle("hidden", i !== x));
+  if (x === "adm") { fillSet(); list(); renderPoster(); }
+}
+
+function unlock() {
+  if (norm($("pw1").value).replace(/[^a-z]/g, "") === "leyladansonra") {
+    try { sessionStorage.setItem("lds_ok", "1"); } catch (e) {}
+    $("pw1").value = "";
+    page("adm");
+  } else {
+    $("gm").innerHTML = '<div class="msg err">Şifre yanlış.</div>';
+  }
+}
+
+function tab(x) {
+  ["sch", "lst", "set"].forEach(i => {
+    $(i).classList.toggle("hidden", i !== x);
+    $("t-" + i).classList.toggle("on", i === x);
+  });
+  if (x === "lst") list();
+  if (x === "set") fillSet();
+}
+
+function apply() {
+  const name = $("fn").value.trim();
+  const term = $("ft").value;
+  const v = Number($("fv").value) || 0;
+  const days = Array.from(document.querySelectorAll("#fd input:checked")).map(c => c.value);
+
+  if (!name || !term || days.length === 0) {
+    $("fm").innerHTML = '<div class="msg err">Lütfen tüm alanları doldurun ve en az bir gün seçin.</div>';
+    return;
+  }
+
+  const existingIndex = A.findIndex(p => norm(p.name) === norm(name));
+  const newApp = { id: Date.now() + Math.random(), name, term, v, days, ts: Date.now() };
+
+  if (existingIndex >= 0) {
+    A[existingIndex] = newApp;
+  } else {
+    A.push(newApp);
+  }
+
+  save();
+  $("fm").innerHTML = '<div class="msg ok">Başvurunuz kaydedildi!</div>';
+  $("fn").value = "";
+  $("fv").value = "0";
+  $("ft").value = "";
+  document.querySelectorAll("#fd input").forEach(i => i.checked = false);
+}
+
+function list() {
+  $("tb").innerHTML = A.map(p => `
+    <tr>
+      <td><b>${esc(p.name)}</b></td>
+      <td>${esc(p.term)}</td>
+      <td>${isSen(p) ? '<span class="tag">Kıdemli</span>' : 'Üye'}</td>
+      <td>${p.v}</td>
+      <td>${T(p)} dk</td>
+      <td><b>${P(p)}</b></td>
+      <td>${p.days.join(", ")}</td>
+      <td><button class="dng" onclick="delApp(${p.id})">Sil</button></td>
+    </tr>
+  `).join("");
+}
+
+function delApp(id) {
+  A = A.filter(p => p.id !== id);
+  save();
+  list();
+}
+
+function wipe() {
+  if (confirm("Tüm başvurular silinsin mi?")) {
+    A = [];
+    SCH = null;
+    localStorage.removeItem(KSCH);
+    save();
+    list();
+    renderPoster();
+  }
+}
+
+function fillSet() {
+  $("sWeek").value = S.week || "";
+  $("sAn").value = S.an || "";
+  $("sW").value = S.w;
+  $("sOn").value = S.on;
+  $("sQ").value = S.q;
+  $("sSen").value = S.sen || "";
+}
+
+function sset() {
+  S.week = $("sWeek").value;
+  S.an = $("sAn").value;
+  S.w = Number($("sW").value) || 15;
+  S.on = Number($("sOn").value) || 5;
+  S.q = Number($("sQ").value) || 2.5;
+  S.sen = $("sSen").value;
+  save();
+  renderPoster();
+}
+
+function generate() {
+  if (A.length === 0) {
+    alert("Henüz başvuru yok!");
+    return;
+  }
+
+  // Akıllı Dağıtım Algoritması
+  let pool = [...A].sort((a, b) => P(a) - P(b));
+  let grid = {
+    "Pazartesi": { "P1": [], "P2": [], "P3": [], "O1": [], "O2": [], "O3": [] },
+    "Salı": { "P1": [], "P2": [], "P3": [], "O1": [], "O2": [], "O3": [] },
+    "Çarşamba": { "P1": [], "P2": [], "P3": [], "O1": [], "O2": [], "O3": [] },
+    "Perşembe": { "P1": [], "P2": [], "P3": [], "O1": [], "O2": [], "O3": [] },
+    "Cuma": { "P1": [], "P2": [], "P3": [], "O1": [], "O2": [], "O3": [] }
+  };
+
+  let assigned = new Set();
+
+  DAYS.forEach(day => {
+    let dayApps = pool.filter(p => p.days.includes(day) && !assigned.has(p.id));
+    let seniors = dayApps.filter(p => isSen(p));
+    let members = dayApps.filter(p => !isSen(p));
+
+    // Kıdemlileri ve Üyeleri Odalara Yerleştir
+    let slots = ["P1", "P2", "P3", "O1", "O2", "O3"];
+    
+    slots.forEach((s, idx) => {
+      // Kıdemli ekle
+      if (seniors.length > 0) {
+        let sen = seniors.shift();
+        grid[day][s].push(sen);
+        assigned.add(sen.id);
+      }
+      // Normal üye ekle
+      for (let i = 0; i < 2; i++) {
+        if (members.length > 0) {
+          let mem = members.shift();
+          grid[day][s].push(mem);
+          assigned.add(mem.id);
         }
-
-        function validateAdminPasscode() {
-            const val = document.getElementById('admin-passcode-input').value.trim().toLowerCase();
-            if (val === 'leyladansonra') {
-                isAdminAuthenticated = true;
-                closePasscodeModal();
-                setMode('admin');
-            } else {
-                alert("Hatalı Şifre! (Varsayılan: leyladansonra)");
-            }
-        }
-
-        function closePasscodeModal() {
-            document.getElementById('modal-passcode').classList.add('hidden');
-            document.getElementById('modal-passcode').classList.remove('flex');
-            document.getElementById('admin-passcode-input').value = '';
-        }
-
-        // MODE SWITCHER
-        function setMode(mode) {
-            currentMode = mode;
-            const studentView = document.getElementById('view-student');
-            const adminView = document.getElementById('view-admin');
-            const btnForm = document.getElementById('nav-btn-form');
-            const btnAdmin = document.getElementById('nav-btn-admin');
-            const roleBadge = document.getElementById('role-badge');
-
-            if (mode === 'student') {
-                studentView.classList.remove('hidden');
-                adminView.classList.add('hidden');
-                btnForm.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-brand-800 shadow-sm flex items-center gap-1.5";
-                btnAdmin.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 text-brand-100 hover:text-white flex items-center gap-1.5";
-                roleBadge.innerText = "Öğrenci Portalı";
-                roleBadge.className = "text-[10px] bg-emerald-500/30 text-emerald-100 border border-emerald-300/30 font-semibold px-2 py-0.5 rounded-full";
-            } else {
-                studentView.classList.add('hidden');
-                adminView.classList.remove('hidden');
-                btnAdmin.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-brand-800 shadow-sm flex items-center gap-1.5";
-                btnForm.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 text-brand-100 hover:text-white flex items-center gap-1.5";
-                roleBadge.innerText = "Yönetici Paneli";
-                roleBadge.className = "text-[10px] bg-amber-500/30 text-amber-100 border border-amber-300/30 font-semibold px-2 py-0.5 rounded-full";
-                updateApplicantsTable();
-            }
-        }
-
-        // ADMIN SUBTAB SWITCHER
-        function setAdminSubtab(subtab) {
-            currentAdminSubtab = subtab;
-            document.getElementById('admin-sub-generator').classList.toggle('hidden', subtab !== 'generator');
-            document.getElementById('admin-sub-applicants').classList.toggle('hidden', subtab !== 'applicants');
-            document.getElementById('admin-sub-seniors').classList.toggle('hidden', subtab !== 'seniors');
-            document.getElementById('admin-sub-stats').classList.toggle('hidden', subtab !== 'stats');
-
-            const btnClassActive = 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm flex items-center gap-1.5';
-            const btnClassInactive = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
-
-            document.getElementById('admin-subtab-btn-generator').className = subtab === 'generator' ? btnClassActive : btnClassInactive;
-            document.getElementById('admin-subtab-btn-applicants').className = subtab === 'applicants' ? btnClassActive : btnClassInactive;
-            document.getElementById('admin-subtab-btn-seniors').className = subtab === 'seniors' ? btnClassActive : btnClassInactive;
-            document.getElementById('admin-subtab-btn-stats').className = subtab === 'stats' ? btnClassActive : btnClassInactive;
-
-            if (subtab === 'stats') renderLeaderboard();
-            if (subtab === 'seniors') renderKnownSeniors();
-        }
-
-        // DYNAMIC REFERENCE TIME CALCULATION
-        function calculateElapsedMinutes(timeStr) {
-            const refTimeVal = document.getElementById('param-ref-time').value || "11:00";
-            const [refHour, refMin] = refTimeVal.split(':').map(Number);
-            const refTotalMinutes = (refHour * 60) + refMin;
-
-            const [h, m] = timeStr.split(':').map(Number);
-            const applicantTotalMinutes = (h * 60) + m;
-
-            let diff = applicantTotalMinutes - refTotalMinutes;
-            return Math.max(0, diff);
-        }
-
-        // STUDENT FORM SUBMISSION
-        function handleStudentSubmit(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('form-name').value.trim();
-            const term = document.getElementById('form-term').value;
-            const visits = parseInt(document.getElementById('form-visits').value) || 0;
-            const role = document.querySelector('input[name="form-role"]:checked').value;
-            const dayCbs = Array.from(document.querySelectorAll('input[name="form-days"]:checked')).map(cb => cb.value);
-
-            if (dayCbs.length === 0) {
-                alert("Lütfen en az bir müsait gün seçin.");
-                return;
-            }
-
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            const minsElapsed = calculateElapsedMinutes(timeStr);
-            const kFactor = parseInt(document.getElementById('param-k').value) || 15;
-
-            const newApplicant = {
-                id: Math.random().toString(36).substr(2, 9),
-                name: name,
-                term: term,
-                visits: visits,
-                isSenior: role === 'senior' || knownSeniors.some(s => s.toLowerCase() === name.toLowerCase()),
-                days: dayCbs,
-                timeString: timeStr,
-                timeMinutes: minsElapsed,
-                score: minsElapsed + (visits * kFactor)
-            };
-
-            applicants.push(newApplicant);
-            updateLiveApplicantCounter();
-
-            document.getElementById('student-form').reset();
-            const toast = document.getElementById('form-success-toast');
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 5000);
-        }
-
-        // WHATSAPP TEXT PARSER
-        function parseWhatsAppInput(silent = false) {
-            const rawText = document.getElementById('whatsapp-raw-input').value.trim();
-            if (!rawText) return;
-
-            const blocks = rawText.split(/(?=\[\d{1,2}\/\d{1,2}\s+\d{1,2}:\d{2}\])|(?=\d{1,2}\/\d{1,2}\s+\d{1,2}:\d{2}\s+-)/gi);
-
-            blocks.forEach(block => {
-                if (!block.trim()) return;
-
-                const timeMatch = block.match(/(\d{1,2}):(\d{2})/);
-                let timeStr = "11:00";
-
-                if (timeMatch) {
-                    timeStr = `${timeMatch[1].padStart(2, '0')}:${timeMatch[2].padStart(2, '0')}`;
-                }
-
-                const minsElapsed = calculateElapsedMinutes(timeStr);
-
-                let name = "";
-                const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                
-                for (let line of lines) {
-                    if (line.includes('[') && line.includes(']')) {
-                        const afterColon = line.split(']:')[1] || line.split(']')[1];
-                        if (afterColon && afterColon.trim().length > 2) {
-                            name = afterColon.trim().replace(/^[\+0-9\s]+:/, '').trim();
-                        }
-                        continue;
-                    }
-                    if (!name && line.length > 2 && !line.toLowerCase().includes('dönem') && !line.toLowerCase().includes('ziyaret') && !line.toLowerCase().includes('müsait')) {
-                        name = line.replace(/^(dönem\s*\d|hiç|sıfır)/i, '').trim();
-                        break;
-                    }
-                }
-
-                if (!name || name.length < 2) return;
-                name = name.replace(/^(\+90|0)?\s*5\d{2}\s*\d{3}\s*\d{2}\s*\d{2}:?/, '').trim();
-
-                let visits = 0;
-                const lower = block.toLowerCase();
-                if (!lower.includes('hiç') && !lower.includes('sıfır') && !lower.includes('yok') && !lower.includes('bulunmadım')) {
-                    const vm = lower.match(/(\d+)\s*(kez|defa|ziyaret|kere)/i);
-                    if (vm) visits = parseInt(vm[1]);
-                }
-
-                const days = [];
-                ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'].forEach(d => {
-                    if (lower.includes(d.toLowerCase()) || (d === 'Pazartesi' && lower.includes('pzt'))) days.push(d);
-                });
-
-                const isSenior = knownSeniors.some(s => s.toLowerCase() === name.toLowerCase()) || lower.includes('kıdemli');
-                const kFactor = parseInt(document.getElementById('param-k').value) || 15;
-
-                applicants.push({
-                    id: Math.random().toString(36).substr(2, 9),
-                    name: name,
-                    term: 'Dönem 2',
-                    visits: visits,
-                    isSenior: isSenior,
-                    days: days.length > 0 ? days : ['Pazartesi', 'Salı'],
-                    timeString: timeStr,
-                    timeMinutes: minsElapsed,
-                    score: minsElapsed + (visits * kFactor)
-                });
-            });
-
-            updateLiveApplicantCounter();
-            closeWhatsAppModal();
-            if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
-        }
-
-        // AUTO SCHEDULER ALGORITHM (IMPROVED EQUAL SENIOR DISTRIBUTION & STRICT NO-SENIOR RULES)
-        function runAutoScheduler() {
-            if (applicants.length === 0) {
-                alert("Henüz başvuru yok. WhatsApp metni yapıştırın veya öğrenci formunu doldurun.");
-                return;
-            }
-
-            const kFactor = parseInt(document.getElementById('param-k').value) || 15;
-            
-            // Recalculate scores with current reference time and K factor
-            applicants.forEach(a => {
-                a.timeMinutes = calculateElapsedMinutes(a.timeString);
-                a.score = a.timeMinutes + (a.visits * kFactor);
-            });
-
-            const days = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
-            activeSchedule = {};
-            days.forEach(d => activeSchedule[d] = { seniors: [], members: [] });
-
-            // Sort applicants
-            const seniors = applicants.filter(a => a.isSenior).sort((a,b) => a.timeMinutes - b.timeMinutes);
-            const members = applicants.filter(a => !a.isSenior).sort((a,b) => a.score - b.score);
-
-            // 1. ASSIGN SENIORS EQUALLY ACROSS DAYS (BALANCED DISTRIBUTION)
-            seniors.forEach(senior => {
-                // Find eligible day for this senior with the MINIMUM current senior count
-                let bestDay = null;
-                let minCount = Infinity;
-
-                for (let d of senior.days) {
-                    if (activeSchedule[d] && activeSchedule[d].seniors.length < 6) {
-                        if (activeSchedule[d].seniors.length < minCount) {
-                            minCount = activeSchedule[d].seniors.length;
-                            bestDay = d;
-                        }
-                    }
-                }
-
-                if (bestDay) {
-                    activeSchedule[bestDay].seniors.push(senior);
-                }
-            });
-
-            // 2. ASSIGN MEMBERS ONLY TO DAYS THAT HAVE SENIORS
-            const capMult = parseFloat(document.getElementById('param-cap').value) || 2.5;
-
-            members.forEach(member => {
-                let assigned = false;
-
-                // Sort member's preferred days by least filled member ratio
-                const validDaysWithSeniors = member.days.filter(d => activeSchedule[d] && activeSchedule[d].seniors.length > 0);
-
-                // Sort preferred days: prefer day with lowest member-to-senior ratio
-                validDaysWithSeniors.sort((a, b) => {
-                    const ratioA = activeSchedule[a].members.length / activeSchedule[a].seniors.length;
-                    const ratioB = activeSchedule[b].members.length / activeSchedule[b].seniors.length;
-                    return ratioA - ratioB;
-                });
-
-                for (let d of validDaysWithSeniors) {
-                    const maxAllowedMembers = Math.round(activeSchedule[d].seniors.length * capMult);
-                    if (activeSchedule[d].members.length < maxAllowedMembers) {
-                        activeSchedule[d].members.push(member);
-                        assigned = true;
-                        break;
-                    }
-                }
-            });
-
-            renderPoster();
-        }
-
-        // RENDER POSTER GRID (STRICT GROUP NO-SENIOR GUARD)
-        function renderPoster() {
-            const body = document.getElementById('poster-rows-body');
-            body.innerHTML = '';
-
-            const allDays = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
-            const categories = ['Pediatri', 'Pediatri', 'Pediatri', 'Onkoloji', 'Onkoloji', 'Onkoloji'];
-
-            categories.forEach((cat, idx) => {
-                const row = document.createElement('div');
-                row.className = "grid grid-cols-6 text-center items-center font-medium bg-white/10 hover:bg-white/20 transition min-h-[65px]";
-
-                let html = `<div class="p-3 border-r-2 border-white font-extrabold text-slate-900 flex items-center justify-center h-full">${cat}</div>`;
-
-                allDays.forEach(day => {
-                    const senior = activeSchedule[day]?.seniors[idx];
-                    
-                    // CRITICAL FIX: If there is no senior for this specific row slot, DO NOT show members without a senior!
-                    const member1 = senior ? activeSchedule[day]?.members[idx * 2] : null;
-                    const member2 = senior ? activeSchedule[day]?.members[(idx * 2) + 1] : null;
-
-                    html += `<div class="p-2 border-r-2 border-white last:border-r-0 flex flex-col justify-center items-center h-full space-y-0.5">`;
-                    if (senior) html += `<div class="font-bold text-slate-900 leading-tight">${senior.name}</div>`;
-                    if (member1) html += `<div class="text-slate-800 text-xs">${member1.name}</div>`;
-                    if (member2) html += `<div class="text-slate-800 text-xs">${member2.name}</div>`;
-                    html += `</div>`;
-                });
-
-                row.innerHTML = html;
-                body.appendChild(row);
-            });
-        }
-
-        // UPDATE UI APPLICANTS COUNTER & TABLE
-        function updateLiveApplicantCounter() {
-            document.getElementById('live-applicant-count').innerText = applicants.length;
-            document.getElementById('cnt-subtab').innerText = applicants.length;
-        }
-
-        function updateApplicantsTable() {
-            const tbody = document.getElementById('applicant-pool-tbody');
-            tbody.innerHTML = '';
-
-            applicants.forEach(a => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3.5 pl-6 font-bold text-slate-900">${a.name}</td>
-                    <td class="p-3.5">${a.term}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${a.isSenior ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-600'}">${a.isSenior ? 'Kıdemli' : 'Üye'}</span></td>
-                    <td class="p-3.5 font-bold">${a.visits}</td>
-                    <td class="p-3.5">${a.days.join(', ')}</td>
-                    <td class="p-3.5">${a.timeString}</td>
-                    <td class="p-3.5 font-bold text-brand-600">${a.score}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // SENIORS MANAGEMENT FUNCTIONS
-        function renderKnownSeniors() {
-            const tbody = document.getElementById('known-seniors-tbody');
-            tbody.innerHTML = '';
-
-            knownSeniors.forEach((senior, idx) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3.5 pl-6 font-bold text-slate-400">#${idx + 1}</td>
-                    <td class="p-3.5 font-bold text-slate-800">${senior}</td>
-                    <td class="p-3.5 text-right pr-6">
-                        <button onclick="removeKnownSenior(${idx})" class="text-rose-600 hover:text-rose-800 font-bold text-xs">Sil</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function addKnownSenior() {
-            const input = document.getElementById('new-senior-name');
-            const name = input.value.trim();
-            if (name && !knownSeniors.includes(name)) {
-                knownSeniors.push(name);
-                input.value = '';
-                renderKnownSeniors();
-            }
-        }
-
-        function removeKnownSenior(index) {
-            knownSeniors.splice(index, 1);
-            renderKnownSeniors();
-        }
-
-        // RENDER LEADERBOARD (FILTERS ONLY SENIORS)
-        function renderLeaderboard() {
-            const tbody = document.getElementById('leaderboard-tbody');
-            tbody.innerHTML = '';
-
-            const seniorsOnly = applicants.filter(a => a.isSenior);
-
-            document.getElementById('stat-volunteers').innerText = seniorsOnly.length;
-            document.getElementById('stat-total-visits').innerText = seniorsOnly.reduce((acc, c) => acc + c.visits, 0);
-
-            const sorted = [...seniorsOnly].sort((a,b) => b.visits - a.visits);
-            const topSenior = sorted[0];
-            document.getElementById('stat-top-senior').innerText = topSenior ? `${topSenior.name} (${topSenior.visits} Ziyaret)` : '-';
-
-            if (sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Henüz kayıtlı kıdemli bulunmamaktadır.</td></tr>`;
-                return;
-            }
-
-            sorted.forEach((item, idx) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3.5 pl-6 font-bold text-slate-400">#${idx + 1}</td>
-                    <td class="p-3.5 font-bold text-slate-800">${item.name}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Kıdemli</span></td>
-                    <td class="p-3.5 text-center font-extrabold text-slate-900">${item.visits} Ziyaret</td>
-                    <td class="p-3.5 text-center font-semibold text-xs">${idx === 0 ? '🏆 Ayın Birinci Kıdemlisi' : idx === 1 ? '🥈 İkinci Kıdemli' : idx === 2 ? '🥉 Üçüncü Kıdemli' : '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // DOWNLOAD PNG
-        function downloadPosterImage() {
-            const container = document.getElementById('official-poster-canvas');
-            html2canvas(container, { scale: 2, backgroundColor: '#2ebad1' }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'leyladan-sonra-ziyaret-listesi.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        }
-
-        // MODAL CONTROLS
-        function openWhatsAppModal() { document.getElementById('modal-whatsapp').classList.remove('hidden'); document.getElementById('modal-whatsapp').classList.add('flex'); }
-        function closeWhatsAppModal() { document.getElementById('modal-whatsapp').classList.add('hidden'); document.getElementById('modal-whatsapp').classList.remove('flex'); }
-
-        function loadSampleWhatsApp() {
-            document.getElementById('whatsapp-raw-input').value = `[24/10 11:01] Merve Öztürk: Merve Öztürk 
-Dönem 1
-Daha önce hiç ziyarette bulunmadım.
-Pazartesi müsaitim.
-[24/10 11:02] Kerem Aksoy: Kerem Aksoy
-Dönem 2
-Hiç ziyarete gitmedim
-Salı günü müsaitim
-[24/10 11:02] Zeynep Arslan: Zeynep Arslan
-Dönem 3
-15 ziyarette bulundum
-Salı müsaitim`;
-        }
-
-        // FULL PURGE / CLEAR ALL DATA
-        function clearAllData() {
-            if (confirm("Kıdemliler ve başvurular dahil TÜM verileri sıfırlamak istediğinize emin misiniz?")) {
-                applicants = [];
-                activeSchedule = {};
-                knownSeniors = [];
-                updateLiveApplicantCounter();
-                updateApplicantsTable();
-                renderKnownSeniors();
-                renderPoster();
-                alert("Tüm veriler başarıyla temizlendi.");
-            }
-        }
-    </script>
+      }
+    });
+  });
+
+  SCH = grid;
+  save();
+  renderPoster();
+}
+
+function renderPoster() {
+  $("pw").innerText = S.week || "Haftalık Ziyaret Programı";
+  const pg = $("pg");
+  pg.innerHTML = "";
+
+  // Sol Üst Köşe
+  pg.appendChild(createCell("Servis / Gün", "h"));
+  DAYS.forEach(d => pg.appendChild(createCell(d, "h")));
+
+  const rows = [
+    { key: "P1", label: "Pediatri 1" },
+    { key: "P2", label: "Pediatri 2" },
+    { key: "P3", label: "Pediatri 3" },
+    { key: "O1", label: "Onkoloji 1" },
+    { key: "O2", label: "Onkoloji 2" },
+    { key: "O3", label: "Onkoloji 3" }
+  ];
+
+  rows.forEach(r => {
+    pg.appendChild(createCell(r.label, "l"));
+    DAYS.forEach(day => {
+      let cellData = SCH && SCH[day] && SCH[day][r.key] ? SCH[day][r.key] : [];
+      let cellText = cellData.map(p => `<b>${esc(p.name)}</b> <small>(${esc(p.term)})</small>`).join("<br>") || "-";
+      pg.appendChild(createCell(cellText));
+    });
+  });
+}
+
+function createCell(html, cls = "") {
+  const div = document.createElement("div");
+  div.className = "pc " + cls;
+  div.innerHTML = html;
+  return div;
+}
+
+function clearSch() {
+  SCH = null;
+  localStorage.removeItem(KSCH);
+  renderPoster();
+}
+
+function demo() {
+  A = [
+    { id: 1, name: "Ali Yılmaz", term: "Dönem 2", v: 1, days: ["Pazartesi", "Çarşamba"], ts: Date.now() - 3600000 },
+    { id: 2, name: "Ayşe Kaya", term: "Dönem 3", v: 0, days: ["Salı", "Perşembe"], ts: Date.now() - 7200000 },
+    { id: 3, name: "Mehmet Demir", term: "Dönem 1", v: 2, days: ["Pazartesi", "Cuma"], ts: Date.now() - 1800000 },
+    { id: 4, name: "Zeynep Çelik", term: "Dönem 4", v: 5, days: ["Çarşamba", "Cuma"], ts: Date.now() - 900000 }
+  ];
+  save();
+  list();
+  generate();
+}
+
+function wa() {
+  const text = $("wa").value;
+  if (!text) return;
+  
+  const lines = text.split("\n");
+  let added = 0;
+
+  lines.forEach(line => {
+    if (!line.trim()) return;
+    let nameMatch = line.match(/(?:\]|-)\s*([^:]+):/);
+    let name = nameMatch ? nameMatch[1].trim() : "";
+    if (!name && line.includes(":")) name = line.split(":")[0].trim();
+
+    if (name) {
+      let days = DAYS.filter(d => norm(line).includes(norm(d)));
+      let termMatch = line.match(/dönem\s*(\d)/i) || line.match(/donem\s*(\d)/i);
+      let term = termMatch ? "Dönem " + termMatch[1] : "Dönem 1";
+      let vMatch = line.match(/(\d+)\s*ziyaret/i);
+      let v = vMatch ? Number(vMatch[1]) : 0;
+
+      if (days.length > 0) {
+        A.push({ id: Date.now() + Math.random(), name, term, v, days, ts: Date.now() });
+        added++;
+      }
+    }
+  });
+
+  save();
+  list();
+  $("wm2").innerHTML = `<div class="msg ok">${added} başvuru WhatsApp metninden aktarıldı.</div>`;
+  $("wa").value = "";
+}
+
+function csv() {
+  let csvContent = "data:text/csv;charset=utf-8,Ad Soyad,Donem,Ziyaret,Gunler\n";
+  A.forEach(p => {
+    csvContent += `"${p.name}","${p.term}",${p.v},"${p.days.join(";")}"\n`;
+  });
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "leyladan_sonra_basvurular.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function png() {
+  html2canvas($("poster"), { scale: 2 }).then(canvas => {
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "Ziyaret_Listesi.png";
+    a.click();
+  });
+}
+</script>
 </body>
 </html>
