@@ -253,16 +253,12 @@
                         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             <i class="fa-solid fa-sliders text-brand-600"></i> Algoritma Parametreleri
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                            <!-- Tarih Aralığı / Hafta Bilgisi -->
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 block mb-1">Çizelge Hafta Başlığı:</label>
-                                <input type="text" id="param-week-title" value="26 - 30 Ekim 3. Hafta" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50" oninput="updatePosterHeaders()">
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- Dinamik Referans Saat Seçimi -->
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">Referans Başlangıç Saati:</label>
                                 <input type="time" id="param-ref-time" value="11:00" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
+                                <p class="text-[10px] text-slate-400 mt-1">Gruptaki form açılış saati</p>
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">
@@ -304,24 +300,24 @@
                         </div>
                     </div>
 
-                    <!-- Poster HTML Container for html2canvas (Birebir Orijinal Leyla'dan Sonra Tasarımı) -->
-                    <div id="official-poster-canvas" class="bg-gradient-to-br from-[#2ebad1] via-[#38c2d9] to-[#2ebad1] p-6 sm:p-10 rounded-3xl shadow-2xl text-slate-900 min-w-[1000px] border-4 border-white select-none relative overflow-hidden">
+                    <!-- Poster HTML Container for html2canvas -->
+                    <div id="official-poster-canvas" class="bg-[#2ebad1] p-6 sm:p-10 rounded-3xl shadow-2xl text-slate-900 min-w-[950px] border-4 border-white select-none">
                         
                         <!-- Header -->
-                        <div class="text-center space-y-1 mb-6 relative z-10">
-                            <h1 class="leyla-title text-6xl sm:text-7xl font-extrabold text-slate-900 tracking-wide drop-shadow-sm">
+                        <div class="text-center space-y-1 mb-8">
+                            <h1 class="leyla-title text-5xl sm:text-6xl font-extrabold text-slate-900 tracking-wide drop-shadow-sm">
                                 Leyla'dan Sonra Ziyaret Listesi
                             </h1>
-                            <p id="poster-week-header" class="leyla-title text-3xl sm:text-4xl font-bold text-slate-900">
-                                26 - 30 Ekim 3. Hafta
+                            <p class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">
+                                Haftalık Ziyaret Çizelgesi
                             </p>
                         </div>
 
                         <!-- Main Table Grid -->
-                        <div class="border-2 border-white rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm shadow-inner relative z-10">
+                        <div class="border-2 border-white rounded-2xl overflow-hidden bg-[#38c2d9]/40 backdrop-blur-sm shadow-inner">
                             
                             <!-- Days Header -->
-                            <div class="grid grid-cols-6 border-b-2 border-white text-center font-extrabold text-base bg-white/20">
+                            <div class="grid grid-cols-6 border-b-2 border-white text-center font-extrabold text-sm sm:text-base bg-white/20">
                                 <div class="p-3 border-r-2 border-white flex items-center justify-center">12.00/13.00</div>
                                 <div class="p-3 border-r-2 border-white">Pazartesi</div>
                                 <div class="p-3 border-r-2 border-white">Salı</div>
@@ -337,18 +333,10 @@
 
                         </div>
 
-                        <!-- Footer & Watermark Logo -->
-                        <div class="mt-8 flex items-end justify-between relative z-10">
-                            <span class="text-xs font-bold text-slate-900 opacity-90">* Kalın yazılı ilk isimler Kıdemli grup liderleridir.</span>
-                            <!-- Orijinal Leyla'dan Sonra El Yazısı Logosu -->
-                            <div class="leyla-title text-6xl sm:text-7xl font-extrabold text-white opacity-80 leading-none drop-shadow-md tracking-wider">
-                                Leyla'dan Sonra
-                            </div>
-                        </div>
-
-                        <!-- Arka Plan Çocuk Silüeti Filigranı -->
-                        <div class="absolute -right-10 -bottom-10 opacity-10 text-[260px] text-white pointer-events-none z-0">
-                            <i class="fa-solid fa-child"></i>
+                        <!-- Footer -->
+                        <div class="mt-6 flex items-center justify-between text-xs font-bold text-slate-900 opacity-90">
+                            <span>* Kalın yazılı ilk isimler Kıdemli grup liderleridir.</span>
+                            <span class="leyla-title text-3xl font-extrabold">Leyla'dan Sonra</span>
                         </div>
 
                     </div>
@@ -543,50 +531,46 @@ Pazartesi müsaitim."></textarea>
 
         // Dynamic Known Seniors Array
         let knownSeniors = [
-            "Beyza Nur Temur", "Ceyda Öztürk", "Fidan Nur Gönültaş",
-            "Rabia Aslantaş", "Elif Ayşe Bakır", "Ece Dinçer",
-            "Nazlı Gül Kandıraz", "Ali Eren Göçmen", "Özlem Kerküklü",
-            "Elif Armağan", "Nehir Boz", "İrem Koçak"
+            "Ahmet Utku Tatar", "Zeynep Arslan", "Mehmet Yılmaz", "Ayşe Kaya",
+            "Caner Demir", "Fatma Çelik", "Burak Şahin", "Selin Aydın",
+            "Oğuzhan Koç", "Ece Yıldız"
         ];
 
-        // DUMMY SAMPLE DATA
+        // DUMMY SAMPLE DATA (10 Kıdemli + 20 Normal Üye)
         const dummyApplicants = [
-            // Kıdemliler
-            { id: 's1', name: 'Beyza Nur Temur', term: 'Dönem 3', visits: 12, isSenior: true, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 181 },
-            { id: 's2', name: 'Ceyda Öztürk', term: 'Dönem 3', visits: 15, isSenior: true, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 227 },
-            { id: 's3', name: 'Fidan Nur Gönültaş', term: 'Dönem 4', visits: 9, isSenior: true, days: ['Cuma'], timeString: '11:02', timeMinutes: 2, score: 137 },
-            { id: 's4', name: 'Rabia Aslantaş', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Pazartesi'], timeString: '11:03', timeMinutes: 3, score: 168 },
-            { id: 's5', name: 'Elif Ayşe Bakır', term: 'Dönem 2', visits: 8, isSenior: true, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 123 },
-            { id: 's6', name: 'Ece Dinçer', term: 'Dönem 3', visits: 14, isSenior: true, days: ['Cuma'], timeString: '11:04', timeMinutes: 4, score: 214 },
-            { id: 's7', name: 'Nazlı Gül Kandıraz', term: 'Dönem 4', visits: 10, isSenior: true, days: ['Pazartesi'], timeString: '11:05', timeMinutes: 5, score: 155 },
-            { id: 's8', name: 'Ali Eren Göçmen', term: 'Dönem 2', visits: 7, isSenior: true, days: ['Salı'], timeString: '11:05', timeMinutes: 5, score: 110 },
-            { id: 's9', name: 'Özlem Kerküklü', term: 'Dönem 3', visits: 13, isSenior: true, days: ['Cuma'], timeString: '11:06', timeMinutes: 6, score: 201 },
-            { id: 's10', name: 'Elif Armağan', term: 'Dönem 2', visits: 6, isSenior: true, days: ['Salı'], timeString: '11:07', timeMinutes: 7, score: 97 },
-            { id: 's11', name: 'Nehir Boz', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Cuma'], timeString: '11:08', timeMinutes: 8, score: 173 },
-            { id: 's12', name: 'İrem Koçak', term: 'Dönem 2', visits: 5, isSenior: true, days: ['Cuma'], timeString: '11:09', timeMinutes: 9, score: 84 },
+            // 10 Kıdemli Üye
+            { id: 's1', name: 'Ahmet Utku Tatar', term: 'Dönem 2', visits: 12, isSenior: true, days: ['Pazartesi', 'Salı'], timeString: '11:01', timeMinutes: 1, score: 181 },
+            { id: 's2', name: 'Zeynep Arslan', term: 'Dönem 3', visits: 15, isSenior: true, days: ['Salı', 'Çarşamba'], timeString: '11:02', timeMinutes: 2, score: 227 },
+            { id: 's3', name: 'Mehmet Yılmaz', term: 'Dönem 4', visits: 9, isSenior: true, days: ['Çarşamba', 'Perşembe'], timeString: '11:02', timeMinutes: 2, score: 137 },
+            { id: 's4', name: 'Ayşe Kaya', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Perşembe', 'Cuma'], timeString: '11:03', timeMinutes: 3, score: 168 },
+            { id: 's5', name: 'Caner Demir', term: 'Dönem 2', visits: 8, isSenior: true, days: ['Pazartesi', 'Cuma'], timeString: '11:03', timeMinutes: 3, score: 123 },
+            { id: 's6', name: 'Fatma Çelik', term: 'Dönem 3', visits: 14, isSenior: true, days: ['Salı', 'Perşembe'], timeString: '11:04', timeMinutes: 4, score: 214 },
+            { id: 's7', name: 'Burak Şahin', term: 'Dönem 4', visits: 10, isSenior: true, days: ['Pazartesi', 'Çarşamba'], timeString: '11:05', timeMinutes: 5, score: 155 },
+            { id: 's8', name: 'Selin Aydın', term: 'Dönem 2', visits: 7, isSenior: true, days: ['Çarşamba', 'Cuma'], timeString: '11:05', timeMinutes: 5, score: 110 },
+            { id: 's9', name: 'Oğuzhan Koç', term: 'Dönem 3', visits: 13, isSenior: true, days: ['Salı', 'Cuma'], timeString: '11:06', timeMinutes: 6, score: 201 },
+            { id: 's10', name: 'Ece Yıldız', term: 'Dönem 2', visits: 6, isSenior: true, days: ['Pazartesi', 'Perşembe'], timeString: '11:07', timeMinutes: 7, score: 97 },
 
-            // Normal Üyeler
-            { id: 'm1', name: 'Ahmet Utku Tatar', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 1 },
-            { id: 'm2', name: 'Sevde Nur Yıldırım', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:02', timeMinutes: 2, score: 17 },
-            { id: 'm3', name: 'Elif Tutal', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 2 },
-            { id: 'm4', name: 'Mehmet Oğuz Cıngıllı', term: 'Dönem 1', visits: 2, isSenior: false, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 33 },
-            { id: 'm5', name: 'S. Tuana Sarıkaya', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:03', timeMinutes: 3, score: 3 },
-            { id: 'm6', name: 'Aslı İrem Ulu', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:04', timeMinutes: 4, score: 4 },
-            { id: 'm7', name: 'Ecrin Arık', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:04', timeMinutes: 4, score: 19 },
-            { id: 'm8', name: 'Elif Naz Karaoğlan', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:05', timeMinutes: 5, score: 5 },
-            { id: 'm9', name: 'Simay Boylu', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:05', timeMinutes: 5, score: 5 },
-            { id: 'm10', name: 'Hamdi Samet Şahin', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:06', timeMinutes: 6, score: 21 },
-            { id: 'm11', name: 'Göksu Günal', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:07', timeMinutes: 7, score: 7 },
-            { id: 'm12', name: 'Alperen İsmail Eroğlu', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Cuma'], timeString: '11:08', timeMinutes: 8, score: 38 },
-            { id: 'm13', name: 'Zülal Naz Erçoban', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:09', timeMinutes: 9, score: 9 },
-            { id: 'm14', name: 'Fatma Yıldırım', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:10', timeMinutes: 10, score: 10 },
-            { id: 'm15', name: 'Esra Çolakoğlu', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:10', timeMinutes: 10, score: 25 },
-            { id: 'm16', name: 'Salih Efe Tuğral', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:11', timeMinutes: 11, score: 11 },
-            { id: 'm17', name: 'Zehra Karacabey', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:12', timeMinutes: 12, score: 12 },
-            { id: 'm18', name: 'Elif Hayta', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Cuma'], timeString: '11:13', timeMinutes: 13, score: 28 },
-            { id: 'm19', name: 'Ayşe Sultan Elçin', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:14', timeMinutes: 14, score: 14 },
-            { id: 'm20', name: 'Mina Alkaç', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:15', timeMinutes: 15, score: 15 },
-            { id: 'm21', name: 'Elif Rana Özcan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:16', timeMinutes: 16, score: 16 }
+            // 20 Normal Üye
+            { id: 'm1', name: 'Merve Öztürk', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 1 },
+            { id: 'm2', name: 'Emre Karahan', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Pazartesi'], timeString: '11:02', timeMinutes: 2, score: 32 },
+            { id: 'm3', name: 'Büşra Yalçın', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 17 },
+            { id: 'm4', name: 'Kerem Aksoy', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 3 },
+            { id: 'm5', name: 'Deniz Güneş', term: 'Dönem 1', visits: 3, isSenior: false, days: ['Çarşamba'], timeString: '11:03', timeMinutes: 3, score: 48 },
+            { id: 'm6', name: 'İrem Polat', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Çarşamba'], timeString: '11:04', timeMinutes: 4, score: 4 },
+            { id: 'm7', name: 'Taha Erdem', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Perşembe'], timeString: '11:04', timeMinutes: 4, score: 19 },
+            { id: 'm8', name: 'Gamze Bulut', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Perşembe'], timeString: '11:05', timeMinutes: 5, score: 5 },
+            { id: 'm9', name: 'Barış Kılıç', term: 'Dönem 1', visits: 2, isSenior: false, days: ['Cuma'], timeString: '11:05', timeMinutes: 5, score: 35 },
+            { id: 'm10', name: 'Seda Korkmaz', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:06', timeMinutes: 6, score: 6 },
+            { id: 'm11', name: 'Kaan Tekin', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:07', timeMinutes: 7, score: 22 },
+            { id: 'm12', name: 'Gizem Avcı', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:08', timeMinutes: 8, score: 8 },
+            { id: 'm13', name: 'Onur Aslan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Çarşamba'], timeString: '11:09', timeMinutes: 9, score: 9 },
+            { id: 'm14', name: 'Hande Çakır', term: 'Dönem 2', visits: 4, isSenior: false, days: ['Perşembe'], timeString: '11:10', timeMinutes: 10, score: 70 },
+            { id: 'm15', name: 'Alperen Taş', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:10', timeMinutes: 10, score: 10 },
+            { id: 'm16', name: 'Ezgi Doğan', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Pazartesi'], timeString: '11:11', timeMinutes: 11, score: 41 },
+            { id: 'm17', name: 'Serkan Acar', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:12', timeMinutes: 12, score: 12 },
+            { id: 'm18', name: 'Ceren Sarı', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Çarşamba'], timeString: '11:13', timeMinutes: 13, score: 28 },
+            { id: 'm19', name: 'Tolga Özkan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Perşembe'], timeString: '11:14', timeMinutes: 14, score: 14 },
+            { id: 'm20', name: 'Yaren Koçak', term: 'Dönem 2', visits: 3, isSenior: false, days: ['Cuma'], timeString: '11:15', timeMinutes: 15, score: 60 }
         ];
 
         // INIT
@@ -594,13 +578,7 @@ Pazartesi müsaitim."></textarea>
             applicants = [...dummyApplicants];
             updateLiveApplicantCounter();
             renderKnownSeniors();
-            runAutoScheduler();
         };
-
-        function updatePosterHeaders() {
-            const titleVal = document.getElementById('param-week-title').value;
-            document.getElementById('poster-week-header').innerText = titleVal;
-        }
 
         // ADMIN ACCESS & PASSCODE
         function attemptAdminAccess() {
@@ -802,7 +780,7 @@ Pazartesi müsaitim."></textarea>
             if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
         }
 
-        // AUTO SCHEDULER ALGORITHM
+        // AUTO SCHEDULER ALGORITHM (IMPROVED EQUAL SENIOR DISTRIBUTION & STRICT NO-SENIOR RULES)
         function runAutoScheduler() {
             if (applicants.length === 0) {
                 alert("Henüz başvuru yok. WhatsApp metni yapıştırın veya öğrenci formunu doldurun.");
@@ -811,6 +789,7 @@ Pazartesi müsaitim."></textarea>
 
             const kFactor = parseInt(document.getElementById('param-k').value) || 15;
             
+            // Recalculate scores with current reference time and K factor
             applicants.forEach(a => {
                 a.timeMinutes = calculateElapsedMinutes(a.timeString);
                 a.score = a.timeMinutes + (a.visits * kFactor);
@@ -820,10 +799,13 @@ Pazartesi müsaitim."></textarea>
             activeSchedule = {};
             days.forEach(d => activeSchedule[d] = { seniors: [], members: [] });
 
+            // Sort applicants
             const seniors = applicants.filter(a => a.isSenior).sort((a,b) => a.timeMinutes - b.timeMinutes);
             const members = applicants.filter(a => !a.isSenior).sort((a,b) => a.score - b.score);
 
+            // 1. ASSIGN SENIORS EQUALLY ACROSS DAYS (BALANCED DISTRIBUTION)
             seniors.forEach(senior => {
+                // Find eligible day for this senior with the MINIMUM current senior count
                 let bestDay = null;
                 let minCount = Infinity;
 
@@ -841,11 +823,16 @@ Pazartesi müsaitim."></textarea>
                 }
             });
 
+            // 2. ASSIGN MEMBERS ONLY TO DAYS THAT HAVE SENIORS
             const capMult = parseFloat(document.getElementById('param-cap').value) || 2.5;
 
             members.forEach(member => {
+                let assigned = false;
+
+                // Sort member's preferred days by least filled member ratio
                 const validDaysWithSeniors = member.days.filter(d => activeSchedule[d] && activeSchedule[d].seniors.length > 0);
 
+                // Sort preferred days: prefer day with lowest member-to-senior ratio
                 validDaysWithSeniors.sort((a, b) => {
                     const ratioA = activeSchedule[a].members.length / activeSchedule[a].seniors.length;
                     const ratioB = activeSchedule[b].members.length / activeSchedule[b].seniors.length;
@@ -856,6 +843,7 @@ Pazartesi müsaitim."></textarea>
                     const maxAllowedMembers = Math.round(activeSchedule[d].seniors.length * capMult);
                     if (activeSchedule[d].members.length < maxAllowedMembers) {
                         activeSchedule[d].members.push(member);
+                        assigned = true;
                         break;
                     }
                 }
@@ -864,7 +852,7 @@ Pazartesi müsaitim."></textarea>
             renderPoster();
         }
 
-        // RENDER POSTER GRID (ORİJİNAL LEYLA'DAN SONRA TASARIMI)
+        // RENDER POSTER GRID (STRICT GROUP NO-SENIOR GUARD)
         function renderPoster() {
             const body = document.getElementById('poster-rows-body');
             body.innerHTML = '';
@@ -874,20 +862,21 @@ Pazartesi müsaitim."></textarea>
 
             categories.forEach((cat, idx) => {
                 const row = document.createElement('div');
-                row.className = "grid grid-cols-6 text-center items-center font-bold text-slate-900 min-h-[75px]";
+                row.className = "grid grid-cols-6 text-center items-center font-medium bg-white/10 hover:bg-white/20 transition min-h-[65px]";
 
-                let html = `<div class="p-3 border-r-2 border-white font-extrabold text-slate-900 flex items-center justify-center h-full text-sm sm:text-base">${cat}</div>`;
+                let html = `<div class="p-3 border-r-2 border-white font-extrabold text-slate-900 flex items-center justify-center h-full">${cat}</div>`;
 
                 allDays.forEach(day => {
                     const senior = activeSchedule[day]?.seniors[idx];
                     
+                    // CRITICAL FIX: If there is no senior for this specific row slot, DO NOT show members without a senior!
                     const member1 = senior ? activeSchedule[day]?.members[idx * 2] : null;
                     const member2 = senior ? activeSchedule[day]?.members[(idx * 2) + 1] : null;
 
-                    html += `<div class="p-2 border-r-2 border-white last:border-r-0 flex flex-col justify-center items-center h-full leading-snug">`;
-                    if (senior) html += `<div class="font-black text-slate-900 text-xs sm:text-sm tracking-tight">${senior.name}</div>`;
-                    if (member1) html += `<div class="text-slate-800 text-[11px] sm:text-xs font-semibold">${member1.name}</div>`;
-                    if (member2) html += `<div class="text-slate-800 text-[11px] sm:text-xs font-semibold">${member2.name}</div>`;
+                    html += `<div class="p-2 border-r-2 border-white last:border-r-0 flex flex-col justify-center items-center h-full space-y-0.5">`;
+                    if (senior) html += `<div class="font-bold text-slate-900 leading-tight">${senior.name}</div>`;
+                    if (member1) html += `<div class="text-slate-800 text-xs">${member1.name}</div>`;
+                    if (member2) html += `<div class="text-slate-800 text-xs">${member2.name}</div>`;
                     html += `</div>`;
                 });
 
@@ -954,7 +943,7 @@ Pazartesi müsaitim."></textarea>
             renderKnownSeniors();
         }
 
-        // RENDER LEADERBOARD
+        // RENDER LEADERBOARD (FILTERS ONLY SENIORS)
         function renderLeaderboard() {
             const tbody = document.getElementById('leaderboard-tbody');
             tbody.innerHTML = '';
