@@ -686,7 +686,7 @@ Pazartesi ve Çarşamba müsaitim"></textarea>
             setTimeout(() => toast.classList.add('hidden'), 5000);
         }
 
-        // YENİ VE GÜÇLENDİRİLMİŞ WHATSAPP METİN AYRIŞTIRICI (PARSER)
+        // GELİŞTİRİLMİŞ WHATSAPP METİN AYRIŞTIRICI (PARSER)
         function parseWhatsAppInput(silent = false) {
             const rawText = document.getElementById('whatsapp-raw-input').value.trim();
             if (!rawText) return;
@@ -720,7 +720,7 @@ Pazartesi ve Çarşamba müsaitim"></textarea>
                         const parts = line.split(']:');
                         if (parts[1]) {
                             let potentialName = parts[1].trim();
-                            // Telefon numarası, kullanıcı adı veya "Dönem 1 Temsilcisi Süleyman:" gibi başlıkları temizle
+                            // Telefon numarası, kullanıcı adı veya özel ünvanları temizle
                             potentialName = potentialName.replace(/^(\+90|0)?\s*5\d{2}\s*\d{3}\s*\d{2}\s*\d{2}:?/, '').trim();
                             potentialName = potentialName.replace(/^@[a-zA-Z0-9._]+:?/, '').trim();
                             potentialName = potentialName.replace(/^dönem\s*\d\s*temsilcisi\s*/i, '').trim();
@@ -997,15 +997,11 @@ Pazartesi ve Çarşamba müsaitim"></textarea>
             document.getElementById('whatsapp-raw-input').value = `[31/10 10:11] +90 530 371 30 23: Ebrar Ayhan 
 Dönem 2 
 6 ziyarette bulundum 
-Pazartesi ve Çarşamba  müsaitim
+Pazartesi ve Çarşamba müsaitim
 [31/10 10:14] @m.tugfe: Tuğfe Köksaldı 
 Dönem 1 
 1 ziyarette bulundum 
-Perşembe cuma müsaitim
-[31/10 10:14] +90 541 461 77 97: Celal Anlaş
-Dönem 1
-1 ziyarette bulundum
-Çarşamba Perşembe müsaitim`;
+Perşembe cuma müsaitim`;
         }
 
         // FULL PURGE / CLEAR ALL DATA
