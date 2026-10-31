@@ -64,13 +64,6 @@
             background: #0284c7;
             border-radius: 4px;
         }
-        /* Orijinal Tasarım Şablon Arka Planı */
-        .poster-bg-template {
-            background-image: url('62195.jpg');
-            background-size: 100% 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
@@ -269,7 +262,7 @@
                             <!-- Dinamik Referans Saat Seçimi -->
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">Referans Başlangıç Saati:</label>
-                                <input type="time" id="param-ref-time" value="11:00" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
+                                <input type="time" id="param-ref-time" value="10:00" class="w-full p-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50">
                             </div>
                             <div>
                                 <label class="text-xs font-semibold text-slate-600 block mb-1">
@@ -296,7 +289,7 @@
 
                 </div>
 
-                <!-- OUTPUT VISUAL POSTER (LEYLA'DAN SONRA ORIJINAL TASARIM ŞABLONU) -->
+                <!-- OUTPUT VISUAL POSTER (LEYLA'DAN SONRA BLUE DESIGN) -->
                 <div id="poster-wrapper" class="space-y-4">
                     
                     <!-- Action bar -->
@@ -311,21 +304,50 @@
                         </div>
                     </div>
 
-                    <!-- Poster HTML Container (Doğrudan Yüklenen Orijinal Görsel Şablon Üzerine Yerleşim) -->
-                    <div id="official-poster-canvas" class="poster-bg-template w-[1000px] h-[750px] p-8 relative rounded-3xl shadow-2xl text-slate-900 select-none overflow-hidden mx-auto">
+                    <!-- Poster HTML Container for html2canvas -->
+                    <div id="official-poster-canvas" class="bg-gradient-to-br from-[#2ebad1] via-[#38c2d9] to-[#2ebad1] p-6 sm:p-10 rounded-3xl shadow-2xl text-slate-900 min-w-[1000px] border-4 border-white select-none relative overflow-hidden">
                         
-                        <!-- Dinamik Hafta Başlığı (Şablondaki Başlık Kısmının Tam Üzerine Hizalı) -->
-                        <div class="text-center absolute top-[85px] left-0 right-0 z-10">
-                            <p id="poster-week-header" class="leyla-title text-3xl font-bold text-slate-900">
+                        <!-- Header -->
+                        <div class="text-center space-y-1 mb-6 relative z-10">
+                            <h1 class="leyla-title text-6xl sm:text-7xl font-extrabold text-slate-900 tracking-wide drop-shadow-sm">
+                                Leyla'dan Sonra Ziyaret Listesi
+                            </h1>
+                            <p id="poster-week-header" class="leyla-title text-3xl sm:text-4xl font-bold text-slate-900">
                                 26 - 30 Ekim 3. Hafta
                             </p>
                         </div>
 
-                        <!-- Izgara Tablosu İçerik Metinleri (Hücre Çerçevelerinin Üzerine Oturan Grid) -->
-                        <div class="absolute top-[180px] left-[55px] right-[55px] bottom-[80px] z-10">
-                            <div id="poster-rows-body" class="grid grid-rows-6 h-full text-xs sm:text-sm font-bold">
+                        <!-- Main Table Grid -->
+                        <div class="border-2 border-white rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm shadow-inner relative z-10">
+                            
+                            <!-- Days Header -->
+                            <div class="grid grid-cols-6 border-b-2 border-white text-center font-extrabold text-base bg-white/20">
+                                <div class="p-3 border-r-2 border-white flex items-center justify-center">12.00/13.00</div>
+                                <div class="p-3 border-r-2 border-white">Pazartesi</div>
+                                <div class="p-3 border-r-2 border-white">Salı</div>
+                                <div class="p-3 border-r-2 border-white">Çarşamba</div>
+                                <div class="p-3 border-r-2 border-white">Perşembe</div>
+                                <div class="p-3">Cuma</div>
+                            </div>
+
+                            <!-- 6 Team Rows -->
+                            <div id="poster-rows-body" class="divide-y-2 divide-white text-xs sm:text-sm">
                                 <!-- Dynamic Render -->
                             </div>
+
+                        </div>
+
+                        <!-- Footer & Watermark Logo -->
+                        <div class="mt-8 flex items-end justify-between relative z-10">
+                            <span class="text-xs font-bold text-slate-900 opacity-90">* Kalın yazılı ilk isimler Kıdemli grup liderleridir.</span>
+                            <div class="leyla-title text-6xl sm:text-7xl font-extrabold text-white opacity-80 leading-none drop-shadow-md tracking-wider">
+                                Leyla'dan Sonra
+                            </div>
+                        </div>
+
+                        <!-- Arka Plan Çocuk Silüeti Filigranı -->
+                        <div class="absolute -right-10 -bottom-10 opacity-10 text-[260px] text-white pointer-events-none z-0">
+                            <i class="fa-solid fa-child"></i>
                         </div>
 
                     </div>
@@ -492,10 +514,10 @@
             
             <p class="text-xs text-slate-500">Gruba atılan mesajları kopyalayıp buraya yapıştırabilirsiniz. Sistem zamanı, adı, ziyaret sayısını ve günleri otomatik ayrıştıracaktır.</p>
 
-            <textarea id="whatsapp-raw-input" rows="8" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 resize-none focus:ring-2 focus:ring-brand-500" placeholder="[24/10 11:01] Ahmet Utku Tatar: Ahmet Utku Tatar
-Dönem 2
-Daha önce hiç ziyarette bulunmadım.
-Pazartesi müsaitim."></textarea>
+            <textarea id="whatsapp-raw-input" rows="8" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono bg-slate-50 resize-none focus:ring-2 focus:ring-brand-500" placeholder="[31/10 10:11] +90 530 371 30 23: Ebrar Ayhan 
+Dönem 2 
+6 ziyarette bulundum 
+Pazartesi ve Çarşamba müsaitim"></textarea>
 
             <div class="flex items-center justify-between pt-2">
                 <button onclick="loadSampleWhatsApp()" class="text-xs text-brand-600 hover:underline font-semibold">
@@ -520,58 +542,15 @@ Pazartesi müsaitim."></textarea>
 
         // Dynamic Known Seniors Array
         let knownSeniors = [
-            "Beyza Nur Temur", "Ceyda Öztürk", "Fidan Nur Gönültaş",
-            "Rabia Aslantaş", "Elif Ayşe Bakır", "Ece Dinçer",
-            "Nazlı Gül Kandıraz", "Ali Eren Göçmen", "Özlem Kerküklü",
-            "Elif Armağan", "Nehir Boz", "İrem Koçak"
-        ];
-
-        // DUMMY SAMPLE DATA
-        const dummyApplicants = [
-            // Kıdemliler
-            { id: 's1', name: 'Beyza Nur Temur', term: 'Dönem 3', visits: 12, isSenior: true, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 181 },
-            { id: 's2', name: 'Ceyda Öztürk', term: 'Dönem 3', visits: 15, isSenior: true, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 227 },
-            { id: 's3', name: 'Fidan Nur Gönültaş', term: 'Dönem 4', visits: 9, isSenior: true, days: ['Cuma'], timeString: '11:02', timeMinutes: 2, score: 137 },
-            { id: 's4', name: 'Rabia Aslantaş', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Pazartesi'], timeString: '11:03', timeMinutes: 3, score: 168 },
-            { id: 's5', name: 'Elif Ayşe Bakır', term: 'Dönem 2', visits: 8, isSenior: true, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 123 },
-            { id: 's6', name: 'Ece Dinçer', term: 'Dönem 3', visits: 14, isSenior: true, days: ['Cuma'], timeString: '11:04', timeMinutes: 4, score: 214 },
-            { id: 's7', name: 'Nazlı Gül Kandıraz', term: 'Dönem 4', visits: 10, isSenior: true, days: ['Pazartesi'], timeString: '11:05', timeMinutes: 5, score: 155 },
-            { id: 's8', name: 'Ali Eren Göçmen', term: 'Dönem 2', visits: 7, isSenior: true, days: ['Salı'], timeString: '11:05', timeMinutes: 5, score: 110 },
-            { id: 's9', name: 'Özlem Kerküklü', term: 'Dönem 3', visits: 13, isSenior: true, days: ['Cuma'], timeString: '11:06', timeMinutes: 6, score: 201 },
-            { id: 's10', name: 'Elif Armağan', term: 'Dönem 2', visits: 6, isSenior: true, days: ['Salı'], timeString: '11:07', timeMinutes: 7, score: 97 },
-            { id: 's11', name: 'Nehir Boz', term: 'Dönem 3', visits: 11, isSenior: true, days: ['Cuma'], timeString: '11:08', timeMinutes: 8, score: 173 },
-            { id: 's12', name: 'İrem Koçak', term: 'Dönem 2', visits: 5, isSenior: true, days: ['Cuma'], timeString: '11:09', timeMinutes: 9, score: 84 },
-
-            // Normal Üyeler
-            { id: 'm1', name: 'Ahmet Utku Tatar', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:01', timeMinutes: 1, score: 1 },
-            { id: 'm2', name: 'Sevde Nur Yıldırım', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:02', timeMinutes: 2, score: 17 },
-            { id: 'm3', name: 'Elif Tutal', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:02', timeMinutes: 2, score: 2 },
-            { id: 'm4', name: 'Mehmet Oğuz Cıngıllı', term: 'Dönem 1', visits: 2, isSenior: false, days: ['Salı'], timeString: '11:03', timeMinutes: 3, score: 33 },
-            { id: 'm5', name: 'S. Tuana Sarıkaya', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:03', timeMinutes: 3, score: 3 },
-            { id: 'm6', name: 'Aslı İrem Ulu', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:04', timeMinutes: 4, score: 4 },
-            { id: 'm7', name: 'Ecrin Arık', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Pazartesi'], timeString: '11:04', timeMinutes: 4, score: 19 },
-            { id: 'm8', name: 'Elif Naz Karaoğlan', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:05', timeMinutes: 5, score: 5 },
-            { id: 'm9', name: 'Simay Boylu', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:05', timeMinutes: 5, score: 5 },
-            { id: 'm10', name: 'Hamdi Samet Şahin', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:06', timeMinutes: 6, score: 21 },
-            { id: 'm11', name: 'Göksu Günal', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:07', timeMinutes: 7, score: 7 },
-            { id: 'm12', name: 'Alperen İsmail Eroğlu', term: 'Dönem 2', visits: 2, isSenior: false, days: ['Cuma'], timeString: '11:08', timeMinutes: 8, score: 38 },
-            { id: 'm13', name: 'Zülal Naz Erçoban', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:09', timeMinutes: 9, score: 9 },
-            { id: 'm14', name: 'Fatma Yıldırım', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Pazartesi'], timeString: '11:10', timeMinutes: 10, score: 10 },
-            { id: 'm15', name: 'Esra Çolakoğlu', term: 'Dönem 1', visits: 1, isSenior: false, days: ['Salı'], timeString: '11:10', timeMinutes: 10, score: 25 },
-            { id: 'm16', name: 'Salih Efe Tuğral', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:11', timeMinutes: 11, score: 11 },
-            { id: 'm17', name: 'Zehra Karacabey', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:12', timeMinutes: 12, score: 12 },
-            { id: 'm18', name: 'Elif Hayta', term: 'Dönem 2', visits: 1, isSenior: false, days: ['Cuma'], timeString: '11:13', timeMinutes: 13, score: 28 },
-            { id: 'm19', name: 'Ayşe Sultan Elçin', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Salı'], timeString: '11:14', timeMinutes: 14, score: 14 },
-            { id: 'm20', name: 'Mina Alkaç', term: 'Dönem 2', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:15', timeMinutes: 15, score: 15 },
-            { id: 'm21', name: 'Elif Rana Özcan', term: 'Dönem 1', visits: 0, isSenior: false, days: ['Cuma'], timeString: '11:16', timeMinutes: 16, score: 16 }
+            "Tuğfe Köksaldı", "Beyza Nur Temur", "Ceyda Öztürk", 
+            "Fidan Nur Gönültaş", "Rabia Aslantaş", "Elif Ayşe Bakır", 
+            "Ece Dinçer", "Nazlı Gül Kandıraz", "Ali Eren Göçmen"
         ];
 
         // INIT
         window.onload = function() {
-            applicants = [...dummyApplicants];
             updateLiveApplicantCounter();
             renderKnownSeniors();
-            runAutoScheduler();
         };
 
         function updatePosterHeaders() {
@@ -655,7 +634,7 @@ Pazartesi müsaitim."></textarea>
 
         // DYNAMIC REFERENCE TIME CALCULATION
         function calculateElapsedMinutes(timeStr) {
-            const refTimeVal = document.getElementById('param-ref-time').value || "11:00";
+            const refTimeVal = document.getElementById('param-ref-time').value || "10:00";
             const [refHour, refMin] = refTimeVal.split(':').map(Number);
             const refTotalMinutes = (refHour * 60) + refMin;
 
@@ -707,76 +686,112 @@ Pazartesi müsaitim."></textarea>
             setTimeout(() => toast.classList.add('hidden'), 5000);
         }
 
-        // WHATSAPP TEXT PARSER
+        // YENİ VE GÜÇLENDİRİLMİŞ WHATSAPP METİN AYRIŞTIRICI (PARSER)
         function parseWhatsAppInput(silent = false) {
             const rawText = document.getElementById('whatsapp-raw-input').value.trim();
             if (!rawText) return;
 
-            const blocks = rawText.split(/(?=\[\d{1,2}\/\d{1,2}\s+\d{1,2}:\d{2}\])|(?=\d{1,2}\/\d{1,2}\s+\d{1,2}:\d{2}\s+-)/gi);
+            // Zaman Damgalarına Göre Bloklara Böl (Örn: [31/10 10:11])
+            const blocks = rawText.split(/(?=\[\d{1,2}\/\d{1,2}\s+\d{1,2}:\d{2}\])/gi);
 
             blocks.forEach(block => {
                 if (!block.trim()) return;
 
+                // 1. Saat Tespiti
                 const timeMatch = block.match(/(\d{1,2}):(\d{2})/);
-                let timeStr = "11:00";
-
+                let timeStr = "10:00";
                 if (timeMatch) {
                     timeStr = `${timeMatch[1].padStart(2, '0')}:${timeMatch[2].padStart(2, '0')}`;
                 }
 
                 const minsElapsed = calculateElapsedMinutes(timeStr);
 
-                let name = "";
+                // 2. Satırları Temizle
                 const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                
-                for (let line of lines) {
-                    if (line.includes('[') && line.includes(']')) {
-                        const afterColon = line.split(']:')[1] || line.split(']')[1];
-                        if (afterColon && afterColon.trim().length > 2) {
-                            name = afterColon.trim().replace(/^[\+0-9\s]+:/, '').trim();
-                        }
-                        continue;
-                    }
-                    if (!name && line.length > 2 && !line.toLowerCase().includes('dönem') && !line.toLowerCase().includes('ziyaret') && !line.toLowerCase().includes('müsait')) {
-                        name = line.replace(/^(dönem\s*\d|hiç|sıfır)/i, '').trim();
-                        break;
-                    }
-                }
 
-                if (!name || name.length < 2) return;
-                name = name.replace(/^(\+90|0)?\s*5\d{2}\s*\d{3}\s*\d{2}\s*\d{2}:?/, '').trim();
-
+                let name = "";
+                let term = "Dönem 1";
                 let visits = 0;
-                const lower = block.toLowerCase();
-                if (!lower.includes('hiç') && !lower.includes('sıfır') && !lower.includes('yok') && !lower.includes('bulunmadım')) {
-                    const vm = lower.match(/(\d+)\s*(kez|defa|ziyaret|kere)/i);
-                    if (vm) visits = parseInt(vm[1]);
+                let days = [];
+
+                lines.forEach((line) => {
+                    // Zaman başlığı satırını analiz et
+                    if (line.startsWith('[')) {
+                        const parts = line.split(']:');
+                        if (parts[1]) {
+                            let potentialName = parts[1].trim();
+                            // Telefon numarası, kullanıcı adı veya "Dönem 1 Temsilcisi Süleyman:" gibi başlıkları temizle
+                            potentialName = potentialName.replace(/^(\+90|0)?\s*5\d{2}\s*\d{3}\s*\d{2}\s*\d{2}:?/, '').trim();
+                            potentialName = potentialName.replace(/^@[a-zA-Z0-9._]+:?/, '').trim();
+                            potentialName = potentialName.replace(/^dönem\s*\d\s*temsilcisi\s*/i, '').trim();
+
+                            if (potentialName.length > 2 && !potentialName.toLowerCase().includes('dönem')) {
+                                name = potentialName;
+                            }
+                        }
+                        return;
+                    }
+
+                    // İsim henüz bulunamadıysa ilk geçerli metin satırını isim olarak al
+                    if (!name && line.length > 2 && !line.toLowerCase().includes('dönem') && !line.toLowerCase().includes('ziyaret') && !line.toLowerCase().includes('müsait')) {
+                        name = line;
+                        return;
+                    }
+
+                    // Dönem Tespiti
+                    const termMatch = line.match(/dönem\s*(\d)/i);
+                    if (termMatch) {
+                        term = `Dönem ${termMatch[1]}`;
+                    }
+
+                    // Ziyaret Sayısı Tespiti
+                    const lowerLine = line.toLowerCase();
+                    if (!lowerLine.includes('hiç') && !lowerLine.includes('bulunmadım') && !lowerLine.includes('bulunmadim')) {
+                        const visitMatch = line.match(/(\d+)\s*(ziyaret|kez|defa|kere)/i);
+                        if (visitMatch) {
+                            visits = parseInt(visitMatch[1]);
+                        }
+                    } else {
+                        visits = 0;
+                    }
+
+                    // Müsait Gün Tespiti
+                    const dayMap = {
+                        'pazartesi': 'Pazartesi', 'pzt': 'Pazartesi',
+                        'salı': 'Salı', 'sali': 'Salı', 'sal': 'Salı',
+                        'çarşamba': 'Çarşamba', 'carsamba': 'Çarşamba', 'çar': 'Çarşamba',
+                        'perşembe': 'Perşembe', 'persembe': 'Perşembe', 'per': 'Perşembe',
+                        'cuma': 'Cuma', 'cum': 'Cuma'
+                    };
+
+                    Object.keys(dayMap).forEach(key => {
+                        if (lowerLine.includes(key) && !days.includes(dayMap[key])) {
+                            days.push(dayMap[key]);
+                        }
+                    });
+                });
+
+                if (name && name.length > 1) {
+                    const kFactor = parseInt(document.getElementById('param-k').value) || 15;
+                    const isSenior = knownSeniors.some(s => s.toLowerCase() === name.toLowerCase());
+
+                    applicants.push({
+                        id: Math.random().toString(36).substr(2, 9),
+                        name: name,
+                        term: term,
+                        visits: visits,
+                        isSenior: isSenior,
+                        days: days.length > 0 ? days : ['Pazartesi'],
+                        timeString: timeStr,
+                        timeMinutes: minsElapsed,
+                        score: minsElapsed + (visits * kFactor)
+                    });
                 }
-
-                const days = [];
-                ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'].forEach(d => {
-                    if (lower.includes(d.toLowerCase()) || (d === 'Pazartesi' && lower.includes('pzt'))) days.push(d);
-                });
-
-                const isSenior = knownSeniors.some(s => s.toLowerCase() === name.toLowerCase()) || lower.includes('kıdemli');
-                const kFactor = parseInt(document.getElementById('param-k').value) || 15;
-
-                applicants.push({
-                    id: Math.random().toString(36).substr(2, 9),
-                    name: name,
-                    term: 'Dönem 2',
-                    visits: visits,
-                    isSenior: isSenior,
-                    days: days.length > 0 ? days : ['Pazartesi', 'Salı'],
-                    timeString: timeStr,
-                    timeMinutes: minsElapsed,
-                    score: minsElapsed + (visits * kFactor)
-                });
             });
 
             updateLiveApplicantCounter();
             closeWhatsAppModal();
-            if (!silent) alert("Başvurular sisteme başarıyla işlendi!");
+            if (!silent) alert("Başvurular sisteme başarıyla aktarıldı!");
         }
 
         // AUTO SCHEDULER ALGORITHM
@@ -841,7 +856,7 @@ Pazartesi müsaitim."></textarea>
             renderPoster();
         }
 
-        // RENDER POSTER GRID (ŞABLON GÖRSEL ÜZERİNE YERLEŞİM)
+        // RENDER POSTER GRID (LEYLA'DAN SONRA ORIJINAL TASARIM)
         function renderPoster() {
             const body = document.getElementById('poster-rows-body');
             body.innerHTML = '';
@@ -851,17 +866,17 @@ Pazartesi müsaitim."></textarea>
 
             categories.forEach((cat, idx) => {
                 const row = document.createElement('div');
-                row.className = "grid grid-cols-6 text-center items-center font-bold text-slate-900";
+                row.className = "grid grid-cols-6 text-center items-center font-bold text-slate-900 min-h-[75px]";
 
-                // İlk sütun şablonda zaten yazılı olduğu için boş bırakılır veya hizalama amaçlı şeffaf tutulur
-                let html = `<div class="p-1"></div>`;
+                let html = `<div class="p-3 border-r-2 border-white font-extrabold text-slate-900 flex items-center justify-center h-full text-sm sm:text-base">${cat}</div>`;
 
                 allDays.forEach(day => {
                     const senior = activeSchedule[day]?.seniors[idx];
+                    
                     const member1 = senior ? activeSchedule[day]?.members[idx * 2] : null;
                     const member2 = senior ? activeSchedule[day]?.members[(idx * 2) + 1] : null;
 
-                    html += `<div class="p-1 flex flex-col justify-center items-center h-full leading-tight">`;
+                    html += `<div class="p-2 border-r-2 border-white last:border-r-0 flex flex-col justify-center items-center h-full leading-snug">`;
                     if (senior) html += `<div class="font-black text-slate-900 text-xs sm:text-sm tracking-tight">${senior.name}</div>`;
                     if (member1) html += `<div class="text-slate-800 text-[11px] sm:text-xs font-semibold">${member1.name}</div>`;
                     if (member2) html += `<div class="text-slate-800 text-[11px] sm:text-xs font-semibold">${member2.name}</div>`;
@@ -966,7 +981,7 @@ Pazartesi müsaitim."></textarea>
         // DOWNLOAD PNG
         function downloadPosterImage() {
             const container = document.getElementById('official-poster-canvas');
-            html2canvas(container, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(container, { scale: 2, backgroundColor: '#2ebad1' }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'leyladan-sonra-ziyaret-listesi.png';
                 link.href = canvas.toDataURL('image/png');
@@ -979,18 +994,18 @@ Pazartesi müsaitim."></textarea>
         function closeWhatsAppModal() { document.getElementById('modal-whatsapp').classList.add('hidden'); document.getElementById('modal-whatsapp').classList.remove('flex'); }
 
         function loadSampleWhatsApp() {
-            document.getElementById('whatsapp-raw-input').value = `[24/10 11:01] Merve Öztürk: Merve Öztürk 
+            document.getElementById('whatsapp-raw-input').value = `[31/10 10:11] +90 530 371 30 23: Ebrar Ayhan 
+Dönem 2 
+6 ziyarette bulundum 
+Pazartesi ve Çarşamba  müsaitim
+[31/10 10:14] @m.tugfe: Tuğfe Köksaldı 
+Dönem 1 
+1 ziyarette bulundum 
+Perşembe cuma müsaitim
+[31/10 10:14] +90 541 461 77 97: Celal Anlaş
 Dönem 1
-Daha önce hiç ziyarette bulunmadım.
-Pazartesi müsaitim.
-[24/10 11:02] Kerem Aksoy: Kerem Aksoy
-Dönem 2
-Hiç ziyarete gitmedim
-Salı günü müsaitim
-[24/10 11:02] Zeynep Arslan: Zeynep Arslan
-Dönem 3
-15 ziyarette bulundum
-Salı müsaitim`;
+1 ziyarette bulundum
+Çarşamba Perşembe müsaitim`;
         }
 
         // FULL PURGE / CLEAR ALL DATA
